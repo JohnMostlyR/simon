@@ -1,0 +1,6 @@
+/**
+ * Function that returns the URL to an asset, given the name and, optionally the extension, defaults to png
+ */
+@function asset-url($name, $extension: 'png') {
+  @return url($global-assets-folder-path + $name + '.' + $extension);
+}

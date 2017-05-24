@@ -1,0 +1,12 @@
+p {
+  @include base-font-regular();
+  margin: 0 0 0 14px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

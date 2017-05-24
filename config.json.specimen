@@ -1,0 +1,12 @@
+{
+  "aws": {
+    "AWSAccessKeyId": "AKxxxxxxxxxx",
+    "AWSSecretKey": "super-secret-key",
+    "AWSRegion": "us-west-2",
+    "S3": {
+      "production": {
+        "bucket": "website.com"
+      }
+    }
+  }
+}

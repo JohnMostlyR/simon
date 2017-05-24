@@ -1,0 +1,43 @@
+<meta charset="utf-8">
+<title>{{ title }}</title>
+{{!-- loadCSS - https://github.com/filamentgroup/loadCSS --}}
+{{!-- Combined with deferred font loading logic - https://gist.github.com/hdragomir/8f00ce2581795fd7b1b7 --}}
+<script id="loadcss">!function(e){"use strict";function t(e,t,n){e.addEventListener?e.addEventListener(t,n,!1):e.attachEvent&&e.attachEvent("on"+t,n)}function n(t,n){return e.localStorage&&localStorage[t+"_content"]&&localStorage[t+"_file"]===n}function o(t,o){if(e.localStorage&&e.XMLHttpRequest)n(t,o)?r(localStorage[t+"_content"]):a(t,o);else{var i=l.createElement("link");i.href=o,i.id=t,i.rel="stylesheet",i.type="text/css",l.getElementsByTagName("head")[0].appendChild(i),l.cookie=t}}function a(e,t){var n=new XMLHttpRequest;n.open("GET",t,!0),n.onreadystatechange=function(){4===n.readyState&&200===n.status&&(r(n.responseText),localStorage[e+"_content"]=n.responseText,localStorage[e+"_file"]=t)},n.send()}function r(e){var t=l.createElement("style");t.setAttribute("type","text/css"),l.getElementsByTagName("head")[0].appendChild(t),t.styleSheet?t.styleSheet.cssText=e:t.innerHTML=e}var l=e.document,i=function(e,t,n){function o(e){return l.body?e():void setTimeout(function(){o(e)})}function a(){i.addEventListener&&i.removeEventListener("load",a),i.media=n||"all"}var r,i=l.createElement("link");if(t)r=t;else{var s=(l.body||l.getElementsByTagName("head")[0]).childNodes;r=s[s.length-1]}var c=l.styleSheets;i.rel="stylesheet",i.href=e,i.media="only x",o(function(){r.parentNode.insertBefore(i,t?r:r.nextSibling)});var d=function(e){for(var t=i.href,n=c.length;n--;)if(c[n].href===t)return e();setTimeout(function(){d(e)})};return i.addEventListener&&i.addEventListener("load",a),i.onloadcssdefined=d,d(a),i};"undefined"!=typeof exports?exports.loadCSS=i:e.loadCSS=i,e.loadLocalStorageCSS=function(a,r){n(a,r)||l.cookie.indexOf(a)>-1?o(a,r):t(e,"load",function(){o(a,r)})}}(this);
+</script>
+<link rel="preload" href="./assets/stylesheets/main.css" as="style" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="./assets/stylesheets/main.css"></noscript>
+<script id="loadcss__sstar-webfonts">
+    loadLocalStorageCSS( "webfonts", "./assets/stylesheets/web-fonts.css" );
+</script>
+<link rel="preload" href="./assets/stylesheets/font-awesome.css" as="style" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="./assets/stylesheets/font-awesome.css"></noscript>
+
+<meta name="description" content="Description">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{{!-- Open Graph properties --}}
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="website">
+<meta property="og:title" content="">
+<meta property="og:description" content="">
+<meta property="og:url" content="https://">
+<meta property="og:site_name" content="">
+<meta property="og:image" content="">
+
+<link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+<link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="android-chrome-192x192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="manifest.json">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+<meta name="theme-color" content="#ffffff">

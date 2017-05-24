@@ -1,0 +1,14 @@
+# Webstorm cache folder
+.idea
+
+# Node modules folder
+node_modules
+
+# SASS cache folder
+/src/assets/stylesheets/.sass-cache
+
+/build/**
+
+# Security Sensitive Files
+/ssh/**
+/config.json

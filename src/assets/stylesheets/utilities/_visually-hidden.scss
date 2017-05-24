@@ -1,0 +1,12 @@
+// Hiding Content for Accessibility
+// https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+.u-visuallyhidden {
+  height: 1px;
+  margin: -1px;
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  border: 0;
+  clip: rect(0 0 0 0);
+  padding: 0;
+}

@@ -1,0 +1,40 @@
+//
+// Fonts
+//––––––––––––––––––––––––––––––––––––––––––––––––––
+
+// https://www.smashingmagazine.com/2013/02/setting-weights-and-styles-at-font-face-declaration/
+
+// Regular font
+@mixin base-font-regular() {
+  font-family: "LatoRegular", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+}
+
+// Italic font
+@mixin base-font-italic() {
+  font-family: "LatoItalic", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+// Bold font
+@mixin base-font-bold() {
+  font-family: "LatoBold", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+}
+
+// Bold Italic font
+@mixin base-font-bold-italic() {
+  font-family: "LatoBoldItalic", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: italic;
+  font-weight: 700;
+}
+
+// Heading font
+@mixin heading-font() {
+  font-family: "BreeSerif", "Roboto Slab", "Droid Serif", Cambria, Georgia, "Times New Roman", Times, serif;
+  font-style: normal;
+  font-weight: 400;
+}
