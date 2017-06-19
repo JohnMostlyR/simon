@@ -404,7 +404,7 @@ module.exports = function (grunt) {
         ],
         tasks: [
           'sass:dev',
-          'purifycss',
+          // 'purifycss',
           'postcss',
         ],
       },
@@ -412,6 +412,7 @@ module.exports = function (grunt) {
         files: [
           path.join(sourceFolder, '*.{hbs,handlebars}'),
           path.join(sourceFolder, '**', '*.{hbs,handlebars}'),
+          path.join(sourceFolder, 'partials', '*.{hbs,handlebars}'),
         ],
         tasks: [
           'compile-handlebars:globbedTemplateAndOutput',
@@ -432,7 +433,7 @@ module.exports = function (grunt) {
       'babel:dev',                  // Transpile ES6 to ES5
       'sass:dev',                   // Compile SASS to CSS
       'compile-handlebars:globbedTemplateAndOutput',  // Compile handlebar templates
-      'purifycss',                  // Remove unused style selectors from CSS files
+      // 'purifycss',                  // Remove unused style selectors from CSS files
       'postcss:dev',                // Perform PostCSS tasks on CSS files
       'express',                    // Start web server
       'watch',                      // Watch for any changes and perform tasks when needed

@@ -1,0 +1,39 @@
+<main class="c-main">
+  <article class="c-simon">
+    <h1 class="c-simon__heading">A Simon Game</h1>
+    <section class="c-display">
+      <h2 class="c-display__heading">Count</h2>
+      <span class="c-display__digit">
+        <output id="js-display-digit-one">0</output>
+      </span>
+      <span class="c-display__digit">
+        <output id="js-display-digit-two">0</output>
+      </span>
+    </section>
+    <form id="js-simon-form" class="c-form" action="#" method="post" autocomplete="off">
+      <fieldset class="c-form__fieldset">
+        <legend class="c-form__legend">Power</legend>
+        <input type="checkbox" name="power" id="js-simon-power" class="c-form__checkbox">
+        <label for="js-simon-power" class="c-form__label c-form__label-for-power">Power</label>
+      </fieldset>
+      <fieldset class="c-form__fieldset">
+        <legend class="c-form__legend">Start</legend>
+        <input type="checkbox" name="start" id="js-simon-start" class="c-form__checkbox" disabled>
+        <label for="js-simon-start" class="c-form__label c-form__label-for-start">Start</label>
+      </fieldset>
+      <fieldset class="c-form__fieldset">
+        <legend class="c-form__legend">Strict</legend>
+        <input type="checkbox" name="strict" id="js-simon-strict" class="c-form__checkbox" disabled>
+        <label for="js-simon-strict" class="c-form__label c-form__label-for-strict">Strict</label>
+      </fieldset>
+    </form>
+    <button id="js-simon-1-btn" class="c-simon__btn c-simon__btn--one is-not-active">Red</button>
+    <button id="js-simon-2-btn" class="c-simon__btn c-simon__btn--two is-not-active">Blue</button>
+    <button id="js-simon-3-btn" class="c-simon__btn c-simon__btn--three is-not-active">Yellow</button>
+    <button id="js-simon-4-btn" class="c-simon__btn c-simon__btn--four is-not-active">Green</button>
+    <audio id="js-simon-sound-1" src="https://s3.amazonaws.com/freecodecamp/simonSound1.mp3" preload="auto"></audio>
+    <audio id="js-simon-sound-2" src="https://s3.amazonaws.com/freecodecamp/simonSound2.mp3" preload="auto"></audio>
+    <audio id="js-simon-sound-3" src="https://s3.amazonaws.com/freecodecamp/simonSound3.mp3" preload="auto"></audio>
+    <audio id="js-simon-sound-4" src="https://s3.amazonaws.com/freecodecamp/simonSound4.mp3" preload="auto"></audio>
+  </article>
+</main>

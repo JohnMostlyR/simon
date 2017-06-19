@@ -1,0 +1,50 @@
+$btn-one-bg-color: #C00;
+$btn-two-bg-color: #00C;
+$btn-three-bg-color: #CC0;
+$btn-four-bg-color: #060;
+
+.c-simon {
+  &__btn {
+    appearance: none;
+  }
+}
+
+.c-simon__btn--one {
+  &.is-active {
+    background-color: $btn-one-bg-color + 80;
+  }
+
+  &.is-not-active {
+    background-color: $btn-one-bg-color;
+  }
+}
+
+.c-simon__btn--two {
+  &.is-active {
+    background-color: $btn-two-bg-color + 80;
+  }
+
+  &.is-not-active {
+    background-color: $btn-two-bg-color;
+  }
+}
+
+.c-simon__btn--three {
+  &.is-active {
+    background-color: $btn-three-bg-color + 80;
+  }
+
+  &.is-not-active {
+    background-color: $btn-three-bg-color;
+  }
+}
+
+.c-simon__btn--four {
+  &.is-active {
+    background-color: $btn-four-bg-color + 80;
+  }
+
+  &.is-not-active {
+    background-color: $btn-four-bg-color;
+  }
+}
