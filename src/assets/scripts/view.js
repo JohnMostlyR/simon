@@ -111,6 +111,22 @@
     //
   };
 
+  View.prototype.disableReplyButtons = function () {
+    this.buttonNodes.forEach((buttonNode) => {
+      if (buttonNode) {
+        buttonNode.setAttribute('disabled', true);
+      }
+    });
+  };
+
+  View.prototype.enableReplyButtons = function () {
+    this.buttonNodes.forEach((buttonNode) => {
+      if (buttonNode) {
+        buttonNode.removeAttribute('disabled');
+      }
+    });
+  };
+
   window.addEventListener('mousedown', (ev) => {
     if (ev.target && ev.target.id) {
       const normalizedId = ev.target.id.toLowerCase();

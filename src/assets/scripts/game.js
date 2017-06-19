@@ -16,18 +16,14 @@
     this.delayBetweenTonesTimerId = 0;// ms
     this.toneLengthTimerId = 0;// ms
 
-    this.onMouseDownSubscription = window.pubsubz.subscribe('onMouseDown', (topic, id) => {
-      if (this.controller.allowUserInput) {
-        this.userSaid.push(id);
-        this.clearTimer();
-      }
+    this.onMouseDownSubscription = window.pubsubz.subscribe('onMouseDown', () => {
+      this.clearTimer();
     });
 
-    this.onMouseUpSubscription = window.pubsubz.subscribe('onMouseUp', () => {
-      if (this.controller.allowUserInput) {
-        console.info('User said: ', this.userSaid);
-        this.setTimer();
-      }
+    this.onMouseUpSubscription = window.pubsubz.subscribe('onMouseUp', (topic, id) => {
+      this.userSaid.push(id);
+      console.info('User said: ', this.userSaid);
+      this.setTimer();
     });
   }
 
@@ -50,7 +46,6 @@
 
   Game.prototype.handleError = function () {
     console.info('Incorrect');
-    this.controller.allowUserInput = false;
     // play error sound
     if (this.controller.model.getProperty('strict')) {
       // in strict mode reset game
@@ -62,14 +57,13 @@
   };
 
   Game.prototype.listen = function () {
-    this.controller.allowUserInput = true;
+    window.pubsubz.publish('onBusy', false);
     this.setTimer();
   };
 
   Game.prototype.speak = function (sequence) {
-    this.controller.allowUserInput = false;
     console.info('Simon speak: ', sequence);
-    this.controller.showCount(sequence.length);
+    this.controller.model.setProperty('count', sequence.length);
     let sequenceIndex = 0;
 
     // delay between tones
@@ -98,6 +92,8 @@
   };
 
   Game.prototype.checkUserInput = function () {
+    window.pubsubz.publish('onBusy', true);
+
     // Validate user input
     console.info('simon: ', this.simonSaid);
     console.info('user: ', this.userSaid);
@@ -134,20 +130,20 @@
   };
 
   Game.prototype.start = function () {
-    this.controller.allowUserInput = false;
+    window.pubsubz.publish('onBusy', true);
     this.clear();
     this.simonSaid = advance(this.simonSaid);
     this.speak(this.simonSaid);
-    this.controller.allowUserInput = true;
   };
 
   Game.prototype.stop = function () {
+    window.pubsubz.publish('onBusy', true);
     console.info('Stop game');
     window.pubsubz.unsubscribe(this.onMouseDownSubscription);
     window.pubsubz.unsubscribe(this.onMouseUpSubscription);
     this.clear();
-    this.controller.allowUserInput = true;
     this.controller = null;
+    window.pubsubz.publish('onBusy', false);
   };
 
   window.Simon = window.Simon || {};

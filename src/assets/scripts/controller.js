@@ -8,9 +8,7 @@
     this.model = model;
     this.view = view;
     this.game = null;
-    this.powerOn = false;
-    this.gameStarted = false;
-    this.allowUserInput = false;
+    this.busy = true;
 
     this.onFormChangeSubscription = window.pubsubz.subscribe('onFormChange', (topic, data) => {
       console.info('changed element: ', data);
@@ -22,7 +20,7 @@
           this.handlePowerButton(value);
           break;
         case 'start':
-          if (this.powerOn && !this.gameStarted) {
+          if (this.model.getProperty('powerOn') && !this.model.getProperty('gameStarted')) {
             this.handleStartButton();
           }
           break;
@@ -35,15 +33,29 @@
     });
 
     this.onMouseDownSubscription = window.pubsubz.subscribe('onMouseDown', (topic, id) => {
-      if (this.allowUserInput) {
+      console.info(`busy: ${this.busy}`);
+      if (!this.busy) {
         this.handleButtonPress(id);
       }
     });
 
     this.onMouseUpSubscription = window.pubsubz.subscribe('onMouseUp', (topic, id) => {
-      console.info('mouse up: ', id);
-      if (this.allowUserInput) {
+      if (!this.busy) {
         this.handleButtonRelease(id);
+      }
+    });
+
+    this.onCountSubscription = window.pubsubz.subscribe('onCount', (topic, data) => {
+      this.showCount(data);
+    });
+
+    this.onBusySubscription = window.pubsubz.subscribe('onBusy', (topic, busy) => {
+      if (busy) {
+        this.view.disableReplyButtons();
+        this.busy = true;
+      } else {
+        this.view.enableReplyButtons();
+        this.busy = false;
       }
     });
   }
@@ -51,19 +63,19 @@
   Controller.prototype.handlePowerButton = function (power) {
     console.info(`power up: ${power}`);
 
-    if (power) {
-      this.powerOn = true;
-      this.view.showPowerOn();
-    } else {
-      this.powerOn = false;
+    if (this.model.getProperty('powerOn')) {
+      this.model.setProperty('powerOn', false);
 
-      if (this.gameStarted) {
+      if (this.model.getProperty('gameStarted')) {
         this.game.stop();
         this.game = null;
-        this.gameStarted = false;
+        this.model.setProperty('gameStarted', false);
       }
 
       this.view.showPowerOff();
+    } else {
+      this.model.setProperty('powerOn', true);
+      this.view.showPowerOn();
     }
   };
 
@@ -71,20 +83,16 @@
     console.info('Starting');
 
     // reset
-    this.userSaid = [];
-    this.allowUserInput = false;
-    this.gameStarted = false;
+    this.model.setProperty('gameStarted', false);
     this.model.setProperty('count', 0);
 
     // start new game
     this.game = new window.Simon.Game(this);
     this.game.start();
-    this.gameStarted = true;
+    this.model.setProperty('gameStarted', true);
   };
 
   Controller.prototype.handleStrictMode = function (strict) {
-    console.info(`Strict mode: ${strict}`);
-
     this.model.setProperty('strict', strict);
   };
 

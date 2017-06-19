@@ -9,29 +9,25 @@
    * @constructor
    */
   function Model() {
-    this.count = {
-      value: 0,
-      subscribers: [],
+    this.powerOn = {
+      value: false,
+      validValues: [true, false],
+    };
+
+    this.gameStarted = {
+      value: false,
+      validValues: [true, false],
     };
 
     this.strict = {
       value: false,
       validValues: [true, false],
-      subscribers: [],
+    };
+
+    this.count = {
+      value: 0,
     };
   }
-
-  /**
-   * @method subscribe
-   * @description Registers new subscribers
-   * @param {string} property - The string representation of the property to get notifications from
-   * @param {Function} subscriber - Callback to the subscriber
-   */
-  Model.prototype.subscribe = function (property, subscriber) {
-    if (this[property] && Array.isArray(this[property].subscribers) && typeof subscriber === 'function') {
-      this[property].subscribers.push(subscriber);
-    }
-  };
 
   /**
    * @method setProperty
@@ -57,16 +53,9 @@
       }
     }
 
-    if ('subscribers' in this[property] && Array.isArray(this[property].subscribers)) {
-      if (newValue !== this[property].value) {
-        this[property].value = newValue;
-        this[property].subscribers.forEach((subscriber) => {
-          subscriber(this[property].value);
-        });
-      }
-    } else {
-      console.error(`You cannot subscribe to property: ${property}`);
-      return;
+    if (newValue !== this[property].value) {
+      this[property].value = newValue;
+      window.pubsubz.publish(`on${property.substr(0, 1).toUpperCase()}${property.substr(1)}`, newValue);
     }
   };
 
