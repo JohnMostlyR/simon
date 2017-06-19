@@ -6,23 +6,26 @@
 
   function Game(controller) {
     this.controller = controller;
-    this.sequence = [];
+    this.simonSaid = [];
+    this.userSaid = [];
     this.delayBetweenTones = 1000; // ms
     this.lengthOfTone = 500; // ms
     this.lastUserInputTimerId = 0;
     this.waitingTimeBeforeCheckingUsrInput = 3000; // ms
     this.speedFactor = 1;
-    this.delayBetweenTonesTimerId = 0;
-    this.toneLengthTimerId = 0;
+    this.delayBetweenTonesTimerId = 0;// ms
+    this.toneLengthTimerId = 0;// ms
 
-    this.controller.view.subscribe('onMouseDown', () => {
+    this.onMouseDownSubscription = window.pubsubz.subscribe('onMouseDown', (topic, id) => {
       if (this.controller.allowUserInput) {
+        this.userSaid.push(id);
         this.clearTimer();
       }
     });
 
-    this.controller.view.subscribe('onMouseUp', () => {
+    this.onMouseUpSubscription = window.pubsubz.subscribe('onMouseUp', () => {
       if (this.controller.allowUserInput) {
+        console.info('User said: ', this.userSaid);
         this.setTimer();
       }
     });
@@ -53,8 +56,8 @@
       // in strict mode reset game
       this.start();
     } else {
-      // in non-strict mode play sequence again so user can have another try
-      this.speak(this.sequence);
+      // in non-strict mode play simonSaid again so user can have another try
+      this.speak(this.simonSaid);
     }
   };
 
@@ -65,7 +68,7 @@
 
   Game.prototype.speak = function (sequence) {
     this.controller.allowUserInput = false;
-    console.info('Speak out new sequence: ', sequence);
+    console.info('Simon speak: ', sequence);
     this.controller.showCount(sequence.length);
     let sequenceIndex = 0;
 
@@ -95,21 +98,22 @@
   };
 
   Game.prototype.checkUserInput = function () {
-    console.info('check checkUserInput: ');
-    console.info('simon: ', this.sequence);
-    console.info('user: ', this.controller.userSequence);
-    this.userSequence = [].concat(this.controller.userSequence);
-    this.controller.userSequence = []; // Clear user input buffer
+    // Validate user input
+    console.info('simon: ', this.simonSaid);
+    console.info('user: ', this.userSaid);
+    this.userSequenceCopy = [].concat(this.userSaid);
+    console.info('User said copy: ', this.userSequenceCopy);
+    this.userSaid = [];// Clear user input buffer
 
     this.controller.allowUserInput = false;
 
-    if (this.userSequence.length !== this.sequence.length) {
+    if (this.userSequenceCopy.length !== this.simonSaid.length) {
       this.handleError();
       return;
     }
 
-    const errors = this.sequence.filter((item, idx) => {
-      return (item !== this.userSequence[idx]);
+    const errors = this.simonSaid.filter((item, idx) => {
+      return (item !== this.userSequenceCopy[idx]);
     });
 
     if (errors.length) {
@@ -117,29 +121,30 @@
       return;
     }
 
-    console.info('Correct');
-    this.sequence = advance(this.sequence);
-    console.info('New sequence: ', this.sequence);
-    this.speak(this.sequence);
+    // User correctly replied
+    this.simonSaid = advance(this.simonSaid);
+    this.speak(this.simonSaid);
   };
 
   Game.prototype.clear = function () {
     this.stopSpeaking();
     this.clearTimer();
-    this.sequence = [];
+    this.simonSaid = [];
     this.controller.showCount(0);
   };
 
   Game.prototype.start = function () {
     this.controller.allowUserInput = false;
     this.clear();
-    this.sequence = advance(this.sequence);
-    this.speak(this.sequence);
+    this.simonSaid = advance(this.simonSaid);
+    this.speak(this.simonSaid);
     this.controller.allowUserInput = true;
   };
 
   Game.prototype.stop = function () {
     console.info('Stop game');
+    window.pubsubz.unsubscribe(this.onMouseDownSubscription);
+    window.pubsubz.unsubscribe(this.onMouseUpSubscription);
     this.clear();
     this.controller.allowUserInput = true;
     this.controller = null;

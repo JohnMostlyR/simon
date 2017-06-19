@@ -10,11 +10,12 @@
     this.game = null;
     this.powerOn = false;
     this.gameStarted = false;
-    this.userSequence = [];
     this.allowUserInput = false;
 
-    this.view.subscribe('onFormChange', (id, value) => {
-      console.info(`changed element id: ${id}, value: ${value}`);
+    this.onFormChangeSubscription = window.pubsubz.subscribe('onFormChange', (topic, data) => {
+      console.info('changed element: ', data);
+      const id = data[0];
+      const value = data[1];
 
       switch (id) {
         case 'power':
@@ -33,22 +34,18 @@
       }
     });
 
-    this.view.subscribe('onMouseDown', (id) => {
+    this.onMouseDownSubscription = window.pubsubz.subscribe('onMouseDown', (topic, id) => {
       if (this.allowUserInput) {
         this.handleButtonPress(id);
       }
     });
 
-    this.view.subscribe('onMouseUp', (id) => {
+    this.onMouseUpSubscription = window.pubsubz.subscribe('onMouseUp', (topic, id) => {
+      console.info('mouse up: ', id);
       if (this.allowUserInput) {
-        this.userSequence.push(id);
         this.handleButtonRelease(id);
       }
     });
-
-    // this.view.subscribe('onInput', (id) => {
-    //   console.info(`pressed: ${id}`);
-    // });
   }
 
   Controller.prototype.handlePowerButton = function (power) {
@@ -74,7 +71,7 @@
     console.info('Starting');
 
     // reset
-    this.userSequence = [];
+    this.userSaid = [];
     this.allowUserInput = false;
     this.gameStarted = false;
     this.model.setProperty('count', 0);

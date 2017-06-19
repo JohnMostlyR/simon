@@ -8,6 +8,21 @@
 
   function View() {
     this.formNode = document.getElementById('js-simon-form');
+    this.formNode.addEventListener('change', ev => {
+      if (ev.target && ev.target.id) {
+        const normalizedId = ev.target.id.toLowerCase();
+
+        if (normalizedId.substr(0, 9) !== 'js-simon-') {
+          return;
+        }
+
+        ev.stopPropagation();
+
+        const normalizedIdPart = normalizedId.substring(9); // Remove namespace: js-simon-
+        window.pubsubz.publish('onFormChange', [normalizedIdPart, ev.target.checked]);
+      }
+    });
+
     this.buttonNodes = [0];
     [1, 2, 3, 4].forEach((idx) => {
       const buttonNode = document.getElementById(`js-simon-${idx}-btn`);
@@ -96,69 +111,49 @@
     //
   };
 
-  View.prototype.subscribe = function (event, subscriber) {
-    switch (event) {
-      case 'onFormChange':
-        this.formNode.addEventListener('change', ev => {
-          if (ev.target && ev.target.id) {
-            const normalizedId = ev.target.id.toLowerCase();
+  window.addEventListener('mousedown', (ev) => {
+    if (ev.target && ev.target.id) {
+      const normalizedId = ev.target.id.toLowerCase();
 
-            if (normalizedId.substr(0, 9) !== 'js-simon-') {
-              return;
-            }
+      if (normalizedId.substr(0, 9) !== 'js-simon-') {
+        return;
+      }
 
-            ev.stopPropagation();
+      ev.stopPropagation();
 
-            const normalizedIdPart = normalizedId.substring(9); // Remove namespace: js-simon-
-            subscriber(normalizedIdPart, ev.target.checked);
-          }
-        }, false);
-        break;
-      case 'onMouseDown':
-        window.addEventListener('mousedown', (ev) => {
-          if (ev.target && ev.target.id) {
-            const normalizedId = ev.target.id.toLowerCase();
+      const normalizedIdPart = normalizedId.substring(9); // Remove namespace: js-simon-
 
-            if (normalizedId.substr(0, 9) !== 'js-simon-') {
-              return;
-            }
-
-            ev.stopPropagation();
-
-            const normalizedIdPart = normalizedId.substring(9); // Remove namespace: js-simon-
-
-            if (normalizedIdPart.substr(-3, 3) === 'btn') {
-              ev.preventDefault();
-              subscriber(window.parseInt(normalizedIdPart.substring(0, normalizedIdPart.length - 4)), 10);
-            }
-          }
-        }, false);
-        break;
-      case 'onMouseUp':
-        window.addEventListener('mouseup', (ev) => {
-          if (ev.target && ev.target.id) {
-            const normalizedId = ev.target.id.toLowerCase();
-
-            if (normalizedId.substr(0, 9) !== 'js-simon-') {
-              return;
-            }
-
-            ev.stopPropagation();
-
-            const normalizedIdPart = normalizedId.substring(9); // Remove namespace: js-simon-
-
-            if (normalizedIdPart.substr(-3, 3) === 'btn') {
-              ev.preventDefault();
-              subscriber(window.parseInt(normalizedIdPart.substring(0, normalizedIdPart.length - 4)), 10);
-            }
-          }
-        }, false);
-        break;
-      default:
-        console.error(`No such event: ${event}`);
-        break;
+      if (normalizedIdPart.substr(-3, 3) === 'btn') {
+        ev.preventDefault();
+        window.pubsubz.publish(
+          'onMouseDown',
+          window.parseInt(normalizedIdPart.substring(0, normalizedIdPart.length - 4), 10)
+        );
+      }
     }
-  };
+  }, false);
+
+  window.addEventListener('mouseup', (ev) => {
+    if (ev.target && ev.target.id) {
+      const normalizedId = ev.target.id.toLowerCase();
+
+      if (normalizedId.substr(0, 9) !== 'js-simon-') {
+        return;
+      }
+
+      ev.stopPropagation();
+
+      const normalizedIdPart = normalizedId.substring(9); // Remove namespace: js-simon-
+
+      if (normalizedIdPart.substr(-3, 3) === 'btn') {
+        ev.preventDefault();
+        window.pubsubz.publish(
+          'onMouseUp',
+          window.parseInt(normalizedIdPart.substring(0, normalizedIdPart.length - 4), 10)
+        );
+      }
+    }
+  }, false);
 
   window.Simon = window.Simon || {};
   window.Simon.View = View;
