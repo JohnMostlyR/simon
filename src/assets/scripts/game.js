@@ -33,6 +33,7 @@
   Game.prototype.setReplyTimeoutTimer = function () {
     this.clearReplyTimeoutTimer();
     this.replyTimeoutTimerId = setTimeout(() => {
+      window.pubsubz.publish('onBusy', true);
       this.handleError();
     }, this.replyTimeout);
   };
@@ -44,7 +45,6 @@
 
   Game.prototype.handleError = function () {
     this.userReplyPosition = -1;
-    console.info('Incorrect');
     // play error sound
     if (this.controller.model.getProperty('strict')) {
       // in strict mode reset game
@@ -61,9 +61,11 @@
   };
 
   Game.prototype.speak = function (sequence) {
-    this.userReplyPosition = -1;
-    this.controller.model.setProperty('count', sequence.length);
+    const sequenceLength = sequence.length;
     let sequenceIndex = 0;
+
+    this.userReplyPosition = -1;
+    this.controller.model.setProperty('count', sequenceLength);
 
     // delay between tones
     this.delayBetweenTonesTimerId = setInterval(() => {
@@ -73,11 +75,11 @@
       this.toneLengthTimerId = setTimeout(() => {
         this.controller.handleButtonRelease(sequence[sequenceIndex]);
 
-        if (sequenceIndex < sequence.length) {
+        if (sequenceIndex < sequenceLength - 1) {
           sequenceIndex += 1; // next tone
         } else {
           clearInterval(this.delayBetweenTonesTimerId);
-          this.listen();
+          return this.listen();
         }
       }, this.toneLength);
     }, this.tonePause);
@@ -92,9 +94,6 @@
 
   // Validate user input
   Game.prototype.checkUserInput = function (userSaid, atIndex) {
-    console.info('user replied: ', userSaid);
-    console.info('at index: ', atIndex);
-    console.info('simon said: ', this.simonSaid[atIndex]);
     if (userSaid === this.simonSaid[atIndex]) {
       // User correctly replied
       if (atIndex === this.simonSaid.length - 1) {
@@ -109,6 +108,7 @@
   };
 
   Game.prototype.clear = function () {
+    window.pubsubz.publish('onBusy', true);
     this.stopSpeaking();
     this.clearReplyTimeoutTimer();
     this.simonSaid = [];
@@ -117,20 +117,16 @@
   };
 
   Game.prototype.start = function () {
-    window.pubsubz.publish('onBusy', true);
     this.clear();
     this.simonSaid = advance(this.simonSaid);
     this.speak(this.simonSaid);
   };
 
   Game.prototype.stop = function () {
-    window.pubsubz.publish('onBusy', true);
-    console.info('Stop game');
+    this.clear();
     window.pubsubz.unsubscribe(this.onLensPressSubscription);
     window.pubsubz.unsubscribe(this.onLensReleaseSubscription);
-    this.clear();
     this.controller = null;
-    window.pubsubz.publish('onBusy', false);
   };
 
   window.Simon = window.Simon || {};
