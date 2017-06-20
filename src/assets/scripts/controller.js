@@ -32,14 +32,14 @@
       }
     });
 
-    this.onMouseDownSubscription = window.pubsubz.subscribe('onMouseDown', (topic, id) => {
+    this.onLensPressSubscription = window.pubsubz.subscribe('onLensPress', (topic, id) => {
       console.info(`busy: ${this.busy}`);
       if (!this.busy) {
         this.handleButtonPress(id);
       }
     });
 
-    this.onMouseUpSubscription = window.pubsubz.subscribe('onMouseUp', (topic, id) => {
+    this.onLensReleaseSubscription = window.pubsubz.subscribe('onLensRelease', (topic, id) => {
       if (!this.busy) {
         this.handleButtonRelease(id);
       }

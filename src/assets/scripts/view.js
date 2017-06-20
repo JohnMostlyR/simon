@@ -142,7 +142,7 @@
       if (normalizedIdPart.substr(-3, 3) === 'btn') {
         ev.preventDefault();
         window.pubsubz.publish(
-          'onMouseDown',
+          'onLensPress',
           window.parseInt(normalizedIdPart.substring(0, normalizedIdPart.length - 4), 10)
         );
       }
@@ -164,7 +164,7 @@
       if (normalizedIdPart.substr(-3, 3) === 'btn') {
         ev.preventDefault();
         window.pubsubz.publish(
-          'onMouseUp',
+          'onLensRelease',
           window.parseInt(normalizedIdPart.substring(0, normalizedIdPart.length - 4), 10)
         );
       }

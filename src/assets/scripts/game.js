@@ -7,23 +7,21 @@
   function Game(controller) {
     this.controller = controller;
     this.simonSaid = [];
-    this.userSaid = [];
-    this.delayBetweenTones = 1000; // ms
-    this.lengthOfTone = 500; // ms
-    this.lastUserInputTimerId = 0;
-    this.waitingTimeBeforeCheckingUsrInput = 3000; // ms
-    this.speedFactor = 1;
+    this.userReplyPosition = -1;
+    this.replyTimeoutTimerId = 0;
+    this.replyTimeout = 5000; // ms
+    this.tonePause = 1000; // ms
     this.delayBetweenTonesTimerId = 0;// ms
+    this.toneLength = 500; // ms
     this.toneLengthTimerId = 0;// ms
 
-    this.onMouseDownSubscription = window.pubsubz.subscribe('onMouseDown', () => {
-      this.clearTimer();
+    this.onLensPressSubscription = window.pubsubz.subscribe('onLensPress', () => {
+      this.clearReplyTimeoutTimer();
     });
 
-    this.onMouseUpSubscription = window.pubsubz.subscribe('onMouseUp', (topic, id) => {
-      this.userSaid.push(id);
-      console.info('User said: ', this.userSaid);
-      this.setTimer();
+    this.onLensReleaseSubscription = window.pubsubz.subscribe('onLensRelease', (topic, lensPressedId) => {
+      window.pubsubz.publish('onBusy', true);
+      this.checkUserInput(lensPressedId, this.userReplyPosition += 1);
     });
   }
 
@@ -32,19 +30,20 @@
     return sequence.concat([chosen]);
   };
 
-  Game.prototype.setTimer = function () {
-    this.clearTimer();
-    this.lastUserInputTimerId = setTimeout(() => {
-      this.checkUserInput();
-    }, this.waitingTimeBeforeCheckingUsrInput * this.speedFactor);
+  Game.prototype.setReplyTimeoutTimer = function () {
+    this.clearReplyTimeoutTimer();
+    this.replyTimeoutTimerId = setTimeout(() => {
+      this.handleError();
+    }, this.replyTimeout);
   };
 
-  Game.prototype.clearTimer = function () {
-    clearTimeout(this.lastUserInputTimerId);
-    this.lastUserInputTimerId = 0;
+  Game.prototype.clearReplyTimeoutTimer = function () {
+    clearTimeout(this.replyTimeoutTimerId);
+    this.replyTimeoutTimerId = 0;
   };
 
   Game.prototype.handleError = function () {
+    this.userReplyPosition = -1;
     console.info('Incorrect');
     // play error sound
     if (this.controller.model.getProperty('strict')) {
@@ -57,12 +56,12 @@
   };
 
   Game.prototype.listen = function () {
+    this.setReplyTimeoutTimer();
     window.pubsubz.publish('onBusy', false);
-    this.setTimer();
   };
 
   Game.prototype.speak = function (sequence) {
-    console.info('Simon speak: ', sequence);
+    this.userReplyPosition = -1;
     this.controller.model.setProperty('count', sequence.length);
     let sequenceIndex = 0;
 
@@ -80,8 +79,8 @@
           clearInterval(this.delayBetweenTonesTimerId);
           this.listen();
         }
-      }, this.lengthOfTone);
-    }, this.delayBetweenTones);
+      }, this.toneLength);
+    }, this.tonePause);
   };
 
   Game.prototype.stopSpeaking = function () {
@@ -91,42 +90,30 @@
     this.toneLengthTimerId = 0;
   };
 
-  Game.prototype.checkUserInput = function () {
-    window.pubsubz.publish('onBusy', true);
-
-    // Validate user input
-    console.info('simon: ', this.simonSaid);
-    console.info('user: ', this.userSaid);
-    this.userSequenceCopy = [].concat(this.userSaid);
-    console.info('User said copy: ', this.userSequenceCopy);
-    this.userSaid = [];// Clear user input buffer
-
-    this.controller.allowUserInput = false;
-
-    if (this.userSequenceCopy.length !== this.simonSaid.length) {
+  // Validate user input
+  Game.prototype.checkUserInput = function (userSaid, atIndex) {
+    console.info('user replied: ', userSaid);
+    console.info('at index: ', atIndex);
+    console.info('simon said: ', this.simonSaid[atIndex]);
+    if (userSaid === this.simonSaid[atIndex]) {
+      // User correctly replied
+      if (atIndex === this.simonSaid.length - 1) {
+        this.simonSaid = advance(this.simonSaid);
+        this.speak(this.simonSaid);
+      } else {
+        this.listen();
+      }
+    } else {
       this.handleError();
-      return;
     }
-
-    const errors = this.simonSaid.filter((item, idx) => {
-      return (item !== this.userSequenceCopy[idx]);
-    });
-
-    if (errors.length) {
-      this.handleError();
-      return;
-    }
-
-    // User correctly replied
-    this.simonSaid = advance(this.simonSaid);
-    this.speak(this.simonSaid);
   };
 
   Game.prototype.clear = function () {
     this.stopSpeaking();
-    this.clearTimer();
+    this.clearReplyTimeoutTimer();
     this.simonSaid = [];
     this.controller.showCount(0);
+    this.userReplyPosition = -1;
   };
 
   Game.prototype.start = function () {
@@ -139,8 +126,8 @@
   Game.prototype.stop = function () {
     window.pubsubz.publish('onBusy', true);
     console.info('Stop game');
-    window.pubsubz.unsubscribe(this.onMouseDownSubscription);
-    window.pubsubz.unsubscribe(this.onMouseUpSubscription);
+    window.pubsubz.unsubscribe(this.onLensPressSubscription);
+    window.pubsubz.unsubscribe(this.onLensReleaseSubscription);
     this.clear();
     this.controller = null;
     window.pubsubz.publish('onBusy', false);
