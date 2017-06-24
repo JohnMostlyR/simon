@@ -16,8 +16,8 @@
           this.handlePowerButton(data.value);
           break;
         case 'start':
-          if (this.model.getProperty('powerOn') && !this.model.getProperty('gameStarted')) {
-            this.handleStartButton();
+          if (this.model.getProperty('powerOn')) {
+            this.handleStartButton(data.value);
           }
           break;
         case 'strict':
@@ -85,20 +85,23 @@
     }
   };
 
-  Controller.prototype.handleStartButton = function () {
-    if (this.model.getProperty('gameStarted')) {
-      this.game.stop();
-      this.game = null;
-      this.model.setProperty('gameStarted', false);
-    }
+  Controller.prototype.handleStartButton = function (start) {
 
     // reset
     this.model.setProperty('count', 0);
 
-    // start new game
-    this.game = new window.Simon.Game(this.model.getProperty('strict'));
-    this.game.start();
-    this.model.setProperty('gameStarted', true);
+    if (start) {
+      // start new game
+      this.game = new window.Simon.Game(this.model.getProperty('strict'));
+      this.game.start();
+      this.model.setProperty('gameStarted', true);
+    } else {
+      if (this.model.getProperty('gameStarted')) {
+        this.game.stop();
+        this.game = null;
+        this.model.setProperty('gameStarted', false);
+      }
+    }
   };
 
   Controller.prototype.handleStrictMode = function (strict) {

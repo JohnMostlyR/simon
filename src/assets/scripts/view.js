@@ -54,6 +54,14 @@
         this.showPowerOff();
       }
     });
+
+    this.subscriptions.onGameStartedSubscription = window.pubsubz.subscribe('onGameStarted', (topic, value) => {
+      if (value) {
+        this.showStart();
+      } else {
+        this.showStop();
+      }
+    });
   }
 
   View.prototype.showPowerOn = function () {
@@ -72,7 +80,20 @@
   };
 
   View.prototype.showStart = function () {
-    //
+  //
+  };
+
+  View.prototype.showStop = function () {
+    synth.triggerRelease();
+    Object.keys(this.timers).forEach((timer) => {
+      clearTimeout(this.timers[timer]);
+    });
+    this.buttonNodes.forEach((button) => {
+      if (button) {
+        button.classList.remove('is-active');
+        button.classList.add('is-not-active');
+      }
+    });
   };
 
   View.prototype.showStrict = function () {
