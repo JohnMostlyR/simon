@@ -16,7 +16,8 @@
       return false;
     }
 
-    console.info(`Publish topic ${topic} with args: ${JSON.stringify(args)}`);
+    // console.info(`Publish topic ${topic} with args: ${JSON.stringify(args)}`);
+
     // Place on a queue and schedule to run at the next opportunity; not immediately.
     // @link https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout#Late_timeouts
     setTimeout(() => {

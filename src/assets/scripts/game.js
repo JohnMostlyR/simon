@@ -4,55 +4,63 @@
 (function (window) {
   'use strict';
 
-  function Game(controller) {
-    this.controller = controller;
+  function Game(strictMode = false) {
+    this.strictMode = strictMode;
     this.simonSaid = [];
     this.userReplyPosition = -1;
-    this.replyTimeoutTimerId = 0;
     this.replyTimeout = 5000; // ms
     this.tonePause = 1000; // ms
-    this.delayBetweenTonesTimerId = 0;// ms
-    this.toneLength = 500; // ms
-    this.toneLengthTimerId = 0;// ms
+    this.toneLength = 420; // ms
+    this.subscriptions = {};
+    this.lengthToWin = 20;
+    this.timers = {};
 
-    this.onLensPressSubscription = window.pubsubz.subscribe('onLensPress', () => {
+    this.subscriptions.onLensPressSubscription = window.pubsubz.subscribe('onLensPress', (topic, lensPressedId) => {
       this.clearReplyTimeoutTimer();
+      this.checkUserInput(lensPressedId, this.userReplyPosition += 1);
     });
 
-    this.onLensReleaseSubscription = window.pubsubz.subscribe('onLensRelease', (topic, lensPressedId) => {
+    this.subscriptions.onLensReleaseSubscription = window.pubsubz.subscribe('onLensRelease', () => {
       window.pubsubz.publish('onBusy', true);
-      this.checkUserInput(lensPressedId, this.userReplyPosition += 1);
+      this.advance();
+    });
+
+    this.subscriptions.onIncorrectShowedSubscription = window.pubsubz.subscribe('onIncorrectShowed', () => {
+      if (this.strictMode) {
+        // in strict mode reset game
+        this.start();
+      } else {
+        // in non-strict mode play sequence again so user can have another try
+        this.speak(this.simonSaid);
+      }
+    });
+
+    this.onStrictSubscription = window.pubsubz.subscribe('onStrict', (topic, data) => {
+      this.strictMode = data;
     });
   }
 
-  const advance = function (sequence) {
+  const addNewItem = function (sequence) {
     const chosen = Math.floor((Math.random() * 4) + 1);
     return sequence.concat([chosen]);
   };
 
   Game.prototype.setReplyTimeoutTimer = function () {
     this.clearReplyTimeoutTimer();
-    this.replyTimeoutTimerId = setTimeout(() => {
+    this.timers.replyTimeoutTimerId = setTimeout(() => {
       window.pubsubz.publish('onBusy', true);
       this.handleError();
     }, this.replyTimeout);
   };
 
   Game.prototype.clearReplyTimeoutTimer = function () {
-    clearTimeout(this.replyTimeoutTimerId);
-    this.replyTimeoutTimerId = 0;
+    clearTimeout(this.timers.replyTimeoutTimerId);
+    this.timers.replyTimeoutTimerId = 0;
   };
 
   Game.prototype.handleError = function () {
     this.userReplyPosition = -1;
-    // play error sound
-    if (this.controller.model.getProperty('strict')) {
-      // in strict mode reset game
-      this.start();
-    } else {
-      // in non-strict mode play simonSaid again so user can have another try
-      this.speak(this.simonSaid);
-    }
+    window.pubsubz.publish('onIncorrectReply', true);
   };
 
   Game.prototype.listen = function () {
@@ -65,68 +73,71 @@
     let sequenceIndex = 0;
 
     this.userReplyPosition = -1;
-    this.controller.model.setProperty('count', sequenceLength);
 
     // delay between tones
-    this.delayBetweenTonesTimerId = setInterval(() => {
-      this.controller.handleButtonPress(sequence[sequenceIndex]);
+    this.timers.delayBetweenTonesTimerId = setInterval(() => {
+      window.pubsubz.publish('onSimonSpeaks', sequence[sequenceIndex]);
 
       // length of tone
-      this.toneLengthTimerId = setTimeout(() => {
-        this.controller.handleButtonRelease(sequence[sequenceIndex]);
+      this.timers.toneLengthTimerId = setTimeout(() => {
+        window.pubsubz.publish('onSimonFinishedSpeaking', sequence[sequenceIndex]);
 
         if (sequenceIndex < sequenceLength - 1) {
           sequenceIndex += 1; // next tone
         } else {
-          clearInterval(this.delayBetweenTonesTimerId);
+          clearInterval(this.timers.delayBetweenTonesTimerId);
           return this.listen();
         }
       }, this.toneLength);
     }, this.tonePause);
   };
 
-  Game.prototype.stopSpeaking = function () {
-    clearInterval(this.delayBetweenTonesTimerId);
-    this.delayBetweenTonesTimerId = 0;
-    clearTimeout(this.toneLengthTimerId);
-    this.toneLengthTimerId = 0;
+  Game.prototype.advance = function () {
+    if (this.userReplyPosition === this.simonSaid.length - 1) {
+      if (this.simonSaid.length === this.lengthToWin) {
+        window.pubsubz.publish('onWin', this.simonSaid);
+      } else {
+        this.simonSaid = addNewItem(this.simonSaid);
+        window.pubsubz.publish('onAdvance', this.simonSaid.length);
+        this.speak(this.simonSaid);
+      }
+    } else {
+      this.listen();
+    }
   };
 
   // Validate user input
   Game.prototype.checkUserInput = function (userSaid, atIndex) {
     if (userSaid === this.simonSaid[atIndex]) {
       // User correctly replied
-      if (atIndex === this.simonSaid.length - 1) {
-        this.simonSaid = advance(this.simonSaid);
-        this.speak(this.simonSaid);
-      } else {
-        this.listen();
-      }
+      window.pubsubz.publish('onCorrectReply', userSaid);
     } else {
       this.handleError();
     }
   };
 
-  Game.prototype.clear = function () {
+  Game.prototype.reset = function () {
     window.pubsubz.publish('onBusy', true);
-    this.stopSpeaking();
-    this.clearReplyTimeoutTimer();
+    Object.keys(this.timers).forEach((timer) => {
+      clearTimeout(this.timers[timer]);
+    });
     this.simonSaid = [];
-    this.controller.showCount(0);
+    window.pubsubz.publish('onAdvance', 0);
     this.userReplyPosition = -1;
   };
 
   Game.prototype.start = function () {
-    this.clear();
-    this.simonSaid = advance(this.simonSaid);
+    this.reset();
+    this.simonSaid = addNewItem(this.simonSaid);
+    window.pubsubz.publish('onAdvance', this.simonSaid.length);
     this.speak(this.simonSaid);
   };
 
   Game.prototype.stop = function () {
-    this.clear();
-    window.pubsubz.unsubscribe(this.onLensPressSubscription);
-    window.pubsubz.unsubscribe(this.onLensReleaseSubscription);
-    this.controller = null;
+    this.reset();
+    Object.keys(this.subscriptions).forEach((subscription) => {
+      window.pubsubz.unsubscribe(this.subscriptions[subscription]);
+    });
   };
 
   window.Simon = window.Simon || {};

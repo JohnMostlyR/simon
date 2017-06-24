@@ -6,8 +6,11 @@
 
   const document = window.document;
 
+  // create a synth and connect it to the master output (your speakers)
+  const synth = new window.Tone.Synth().toMaster();
+
   function View() {
-    this.formNode = document.getElementById('js-simon-form');
+    this.formNode = document.querySelector('#js-simon-form');
     this.formNode.addEventListener('change', ev => {
       if (ev.target && ev.target.id) {
         const normalizedId = ev.target.id.toLowerCase();
@@ -19,9 +22,16 @@
         ev.stopPropagation();
 
         const normalizedIdPart = normalizedId.substring(9); // Remove namespace: js-simon-
-        window.pubsubz.publish('onFormChange', [normalizedIdPart, ev.target.checked]);
+        const parameters = {
+          id: normalizedIdPart,
+          value: ev.target.checked,
+        };
+        window.pubsubz.publish('onFormChange', parameters);
       }
     });
+
+    this.startButton = this.formNode.querySelector('#js-simon-start');
+    this.strictButton = this.formNode.querySelector('#js-simon-strict');
 
     this.buttonNodes = [0];
     [1, 2, 3, 4].forEach((idx) => {
@@ -31,28 +41,34 @@
       this.buttonNodes.push(buttonNode);
     });
 
-    this.audioNodes = [0];
-    [1, 2, 3, 4].forEach((idx) => {
-      const audioNode = document.getElementById(`js-simon-sound-${idx}`);
-      audioNode.pause();
-      audioNode.currentTime = 0;
-      this.audioNodes.push(audioNode);
+    // this.notes = [0, 220, 164.814, 138.591, 82.407];
+    // this.notes = [0, 311.127, 207.652, 247.942, 415.305];
+    this.notes = [0, 329.628, 195.998, 261.626, 391.995];
+    this.timers = {};
+    this.subscriptions = {};
+
+    this.subscriptions.onPowerSubscription = window.pubsubz.subscribe('onPowerOn', (topic, value) => {
+      if (value) {
+        this.showPowerOn();
+      } else {
+        this.showPowerOff();
+      }
     });
   }
 
   View.prototype.showPowerOn = function () {
-    const startButton = document.getElementById('js-simon-start');
-    const strictButton = document.getElementById('js-simon-strict');
-    startButton.removeAttribute('disabled');
-    strictButton.removeAttribute('disabled');
+    this.startButton.removeAttribute('disabled');
+    this.strictButton.removeAttribute('disabled');
   };
 
   View.prototype.showPowerOff = function () {
+    synth.triggerRelease();
+    Object.keys(this.timers).forEach((timer) => {
+      clearTimeout(this.timers[timer]);
+    });
     this.formNode.reset();
-    const startButton = document.getElementById('js-simon-start');
-    const strictButton = document.getElementById('js-simon-strict');
-    startButton.setAttribute('disabled', 'disabled');
-    strictButton.setAttribute('disabled', 'disabled');
+    this.startButton.setAttribute('disabled', 'disabled');
+    this.strictButton.setAttribute('disabled', 'disabled');
   };
 
   View.prototype.showStart = function () {
@@ -67,8 +83,7 @@
 
     // switch on the selected button, if any.
     if (button && button < this.buttonNodes.length) {
-      const audioNode = this.audioNodes[button];
-      audioNode.play();
+      synth.triggerAttack(this.notes[button]);
 
       const btnNode = this.buttonNodes[button];
       btnNode.classList.remove('is-not-active');
@@ -80,9 +95,7 @@
 
     // switch off the selected button, if any.
     if (button && button < this.buttonNodes.length) {
-      const audioNode = this.audioNodes[button];
-      audioNode.pause();
-      audioNode.currentTime = 0;
+      synth.triggerRelease();
 
       const btnNode = this.buttonNodes[button];
       btnNode.classList.remove('is-active');
@@ -103,12 +116,47 @@
     }
   };
 
-  View.prototype.showError = function (msg) {
-    //
+  View.prototype.showIncorrect = function () {
+    synth.triggerAttack(84);
+    this.timers.showErrorTimer = setTimeout(() => {
+      synth.triggerRelease();
+      window.pubsubz.publish('onIncorrectShowed', true);
+    }, 1500);
   };
 
-  View.prototype.showWin = function () {
-    //
+  View.prototype.showWin = function (lastItem) {
+    const self = this;
+    const sequence = [1, 3, 2, 4, 1, 3, 2, 4, 1, 3, 2, 4];
+    let idx = -1;
+
+    self.timers.pauseTimerId = setTimeout(function play() {
+      if (!document.querySelector('#js-simon-power').checked) {
+        Object.keys(self.timers).forEach((timer) => {
+          clearTimeout(self.timers[timer]);
+        });
+        return;
+      }
+
+      const button = sequence[idx += 1];
+      synth.triggerAttack(self.notes[button]);
+      const btnNode = self.buttonNodes[button];
+      btnNode.classList.remove('is-not-active');
+      btnNode.classList.add('is-active');
+
+      self.timers.playTimerId = setTimeout(() => {
+        synth.triggerRelease();
+        btnNode.classList.remove('is-active');
+        btnNode.classList.add('is-not-active');
+
+        if (idx < sequence.length - 1) {
+          self.timers.pauseTimerId = setTimeout(play, 100);
+        } else {
+          clearTimeout(self.timers.pauseTimerId);
+          clearTimeout(self.timers.playTimerId);
+          window.pubsubz.publish('onShowWinFinished', true);
+        }
+      }, 100);
+    }, 100);
   };
 
   View.prototype.disableReplyButtons = function () {

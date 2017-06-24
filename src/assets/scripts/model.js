@@ -27,6 +27,10 @@
     this.count = {
       value: 0,
     };
+
+    this.onAdvanceSubscription = window.pubsubz.subscribe('onAdvance', (topic, count) => {
+      this.setProperty('count', count);
+    });
   }
 
   /**

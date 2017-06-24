@@ -8,16 +8,12 @@
     this.model = model;
     this.view = view;
     this.game = null;
-    this.busy = true;
+    this.waitingTimeForStartingOverAfterWin = 5000; // ms
 
     this.onFormChangeSubscription = window.pubsubz.subscribe('onFormChange', (topic, data) => {
-      console.info('changed element: ', data);
-      const id = data[0];
-      const value = data[1];
-
-      switch (id) {
+      switch (data.id) {
         case 'power':
-          this.handlePowerButton(value);
+          this.handlePowerButton(data.value);
           break;
         case 'start':
           if (this.model.getProperty('powerOn') && !this.model.getProperty('gameStarted')) {
@@ -25,24 +21,27 @@
           }
           break;
         case 'strict':
-          this.handleStrictMode(value);
+          this.handleStrictMode(data.value);
           break;
         default:
           break;
       }
     });
 
-    this.onLensPressSubscription = window.pubsubz.subscribe('onLensPress', (topic, id) => {
-      console.info(`busy: ${this.busy}`);
-      if (!this.busy) {
-        this.handleButtonPress(id);
-      }
+    this.onSimonSpeaksSubscription = window.pubsubz.subscribe('onSimonSpeaks', (topic, saying) => {
+      this.handleButtonPress(saying);
+    });
+
+    this.onSimonFinishedSpeakingSubscription = window.pubsubz.subscribe('onSimonFinishedSpeaking', (topic, said) => {
+      this.handleButtonRelease(said);
+    });
+
+    this.onLensPressSubscription = window.pubsubz.subscribe('onCorrectReply', (topic, id) => {
+      this.handleButtonPress(id);
     });
 
     this.onLensReleaseSubscription = window.pubsubz.subscribe('onLensRelease', (topic, id) => {
-      if (!this.busy) {
-        this.handleButtonRelease(id);
-      }
+      this.handleButtonRelease(id);
     });
 
     this.onCountSubscription = window.pubsubz.subscribe('onCount', (topic, data) => {
@@ -52,17 +51,27 @@
     this.onBusySubscription = window.pubsubz.subscribe('onBusy', (topic, busy) => {
       if (busy) {
         this.view.disableReplyButtons();
-        this.busy = true;
       } else {
         this.view.enableReplyButtons();
-        this.busy = false;
       }
+    });
+
+    this.onIncorrectReplySubscription = window.pubsubz.subscribe('onIncorrectReply', () => {
+      this.view.showIncorrect();
+    });
+
+    this.onWinSubscription = window.pubsubz.subscribe('onWin', (topic, sequence) => {
+      this.view.showWin(sequence.slice(-1));
+    });
+
+    this.onShowWinFinishedSubscription = window.pubsubz.subscribe('onShowWinFinished', () => {
+      setTimeout(() => {
+        this.handleStartButton();
+      }, this.waitingTimeForStartingOverAfterWin);
     });
   }
 
   Controller.prototype.handlePowerButton = function (power) {
-    console.info(`power up: ${power}`);
-
     if (this.model.getProperty('powerOn')) {
       this.model.setProperty('powerOn', false);
 
@@ -71,23 +80,23 @@
         this.game = null;
         this.model.setProperty('gameStarted', false);
       }
-
-      this.view.showPowerOff();
     } else {
       this.model.setProperty('powerOn', true);
-      this.view.showPowerOn();
     }
   };
 
   Controller.prototype.handleStartButton = function () {
-    console.info('Starting');
+    if (this.model.getProperty('gameStarted')) {
+      this.game.stop();
+      this.game = null;
+      this.model.setProperty('gameStarted', false);
+    }
 
     // reset
-    this.model.setProperty('gameStarted', false);
     this.model.setProperty('count', 0);
 
     // start new game
-    this.game = new window.Simon.Game(this);
+    this.game = new window.Simon.Game(this.model.getProperty('strict'));
     this.game.start();
     this.model.setProperty('gameStarted', true);
   };
