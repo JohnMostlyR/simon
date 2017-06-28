@@ -10,6 +10,9 @@
   const synth = new window.Tone.Synth().toMaster();
 
   function View() {
+    this.firstDigitNode = document.getElementById('js-display-digit-one');
+    this.secondDigitNode = document.getElementById('js-display-digit-two');
+
     this.formNode = document.querySelector('#js-simon-form');
     this.formNode.addEventListener('change', ev => {
       if (ev.target && ev.target.id) {
@@ -67,6 +70,10 @@
   View.prototype.showPowerOn = function () {
     this.startButton.removeAttribute('disabled');
     this.strictButton.removeAttribute('disabled');
+    this.firstDigitNode.innerHTML = '\u2013';
+    this.secondDigitNode.innerHTML = '\u2013';
+    this.firstDigitNode.classList.add('is-active');
+    this.secondDigitNode.classList.add('is-active');
   };
 
   View.prototype.showPowerOff = function () {
@@ -77,6 +84,10 @@
     this.formNode.reset();
     this.startButton.setAttribute('disabled', 'disabled');
     this.strictButton.setAttribute('disabled', 'disabled');
+    this.firstDigitNode.classList.remove('is-active');
+    this.secondDigitNode.classList.remove('is-active');
+    this.firstDigitNode.innerHTML = '8';
+    this.secondDigitNode.innerHTML = '8';
   };
 
   View.prototype.showStart = function () {
@@ -94,6 +105,8 @@
         button.classList.add('is-not-active');
       }
     });
+    this.firstDigitNode.innerHTML = '\u2013';
+    this.secondDigitNode.innerHTML = '\u2013';
   };
 
   View.prototype.showStrict = function () {
@@ -129,11 +142,8 @@
       const firstDigit = show.substr(0, 1) || '0';
       const secondDigit = show.substr(1, 1) || '0';
 
-      const firstDigitNode = document.getElementById('js-display-digit-one');
-      firstDigitNode.innerHTML = firstDigit;
-
-      const secondDigitNode = document.getElementById('js-display-digit-two');
-      secondDigitNode.innerHTML = secondDigit;
+      this.firstDigitNode.innerHTML = firstDigit;
+      this.secondDigitNode.innerHTML = secondDigit;
     }
   };
 

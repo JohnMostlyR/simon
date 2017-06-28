@@ -13,7 +13,7 @@
 
 .c-display__digit {
   @include display-font();
-  color: red;
+  color: #222;
   background-color: #333;
   font-size: 6vmin;
   padding: 0 .2rem;
@@ -29,4 +29,8 @@
   &:last-child {
     border-top-right-radius: .5vmin;
   }
+}
+
+.c-display__digit.is-active {
+  color: red;
 }
