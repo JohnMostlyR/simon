@@ -1,7 +1,0 @@
-em {
-  @include base-font-italic();
-
-  &.bold {
-    @include base-font-bold-italic();
-  }
-}

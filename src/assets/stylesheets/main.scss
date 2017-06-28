@@ -1,8 +1,6 @@
 // SETTINGS
 @import '../../../node_modules/normalize.css/normalize';
 @import 'settings/global';
-@import 'settings/images';
-@import 'settings/z-indexes';
 
 // TOOLS
 @import 'tools/svg-url';
@@ -11,27 +9,16 @@
 @import 'generic/fonts';
 
 // ELEMENTS
-@import 'elements/bold';
-@import 'elements/emphasis';
-@import 'elements/paragraph';
-@import 'elements/strong';
-@import 'elements/input-range';
-@import 'elements/img';
 @import 'elements/page';
 
 // OBJECTS
-@import 'objects/shadows';
-
-// UTILITIES
-@import 'utilities/toggle';
-@import 'utilities/truncate';
-@import 'utilities/visually-hidden';
-
-//@import '../../../node_modules/animate-scss/_properties';
-//@import '../../../node_modules/animate-scss/_attention-seekers/attention-seekers';
 
 // COMPONENTS
 @import 'components/simon';
 @import 'components/form';
 @import 'components/lenses';
 @import 'components/display';
+@import 'components/background';
+
+// UTILITIES
+@import 'utilities/visually-hidden';

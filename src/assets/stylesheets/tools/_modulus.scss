@@ -1,6 +1,0 @@
-/**
- * Determine the modulus
- */
-@function mod($x, $y) {
-  @return $x - $y * ($x / $y);
-}
