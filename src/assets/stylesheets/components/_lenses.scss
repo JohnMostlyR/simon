@@ -1,0 +1,66 @@
+.c-lenses__lens {
+  display: block;
+  height: 45vmin;
+  position: absolute;
+  width: 45vmin;
+  z-index: -1;
+  appearance: none;
+  border: 1vmin solid #333;
+  padding: 0;
+}
+
+.c-lenses__lens--one {
+  transform: translate(50%, -50%);
+  border-top-right-radius: 100%;
+
+  &.is-active {
+    background-color: $lens-one-bg-color + 80;
+    background-image: radial-gradient(circle, $lens-one-bg-color + 150, $lens-one-bg-color);
+  }
+
+  &.is-not-active {
+    background-color: $lens-one-bg-color;
+  }
+}
+
+.c-lenses__lens--two {
+  transform: translate(50%, 50%);
+  border-bottom-right-radius: 100%;
+
+  &.is-active {
+    background-color: $lens-two-bg-color + 80;
+    background-image: radial-gradient(circle, $lens-two-bg-color + 150, $lens-two-bg-color);
+  }
+
+  &.is-not-active {
+    background-color: $lens-two-bg-color;
+  }
+}
+
+.c-lenses__lens--three {
+  transform: translate(-50%, 50%);
+  border-bottom-left-radius: 100%;
+
+  &.is-active {
+    background-color: $lens-three-bg-color + 80;
+    background-image: radial-gradient(circle, $lens-three-bg-color + 150, $lens-three-bg-color);
+  }
+
+  &.is-not-active {
+    background-color: $lens-three-bg-color;
+  }
+}
+
+.c-lenses__lens--four {
+  transform: translate(-50%, -50%);
+  border-top-left-radius: 100%;
+
+  &.is-active {
+    background-color: $lens-four-bg-color + 80;
+    background-image: radial-gradient(circle, $lens-four-bg-color + 150, $lens-four-bg-color);
+  }
+
+  &.is-not-active {
+    background-color: $lens-four-bg-color;
+  }
+}

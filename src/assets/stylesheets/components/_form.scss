@@ -1,0 +1,51 @@
+.c-form__checkbox:checked ~ .c-form__label {
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .6);
+}
+
+.c-form__fieldset {
+  display: inline-block;
+  border: 0;
+  margin: 0;
+  padding: 1vmin;
+  line-height: 1;
+  text-align: center;
+}
+
+.c-form__label {
+  display: inline-block;
+  position: relative;
+  border-radius: 50%;
+  padding: 1.5vmin;
+  box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.9);
+}
+
+.c-form__legend {
+  font-size: 2vmin;
+}
+
+.c-form__checkbox--power:not(:checked) ~ .c-form__label {
+  background-color: $power-btn-bg-color;
+}
+
+.c-form__checkbox--start:not(:checked) ~ .c-form__label {
+  background-color: $start-btn-bg-color;
+}
+
+.c-form__checkbox--strict:not(:checked) ~ .c-form__label {
+  background-color: $strict-btn-bg-color;
+}
+
+.c-form__checkbox--power:checked ~ .c-form__label {
+  background-color: $power-btn-bg-color--active;
+  background-image: radial-gradient(circle, $power-btn-bg-color--active 50%, $power-btn-bg-color);
+}
+
+.c-form__checkbox--start:checked ~ .c-form__label {
+  background-color: $start-btn-bg-color--active;
+  background-image: radial-gradient(circle, $start-btn-bg-color--active 50%, $start-btn-bg-color);
+}
+
+.c-form__checkbox--strict:checked ~ .c-form__label {
+  background-color: $strict-btn-bg-color--active;
+  background-image: radial-gradient(circle, $strict-btn-bg-color--active 50%, $strict-btn-bg-color);
+}

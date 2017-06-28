@@ -6,35 +6,42 @@
 
 // Regular font
 @mixin base-font-regular() {
-  font-family: "LatoRegular", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
 }
 
 // Italic font
 @mixin base-font-italic() {
-  font-family: "LatoItalic", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   font-weight: 400;
 }
 
 // Bold font
 @mixin base-font-bold() {
-  font-family: "LatoBold", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 700;
 }
 
 // Bold Italic font
 @mixin base-font-bold-italic() {
-  font-family: "LatoBoldItalic", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   font-weight: 700;
 }
 
 // Heading font
 @mixin heading-font() {
-  font-family: "BreeSerif", "Roboto Slab", "Droid Serif", Cambria, Georgia, "Times New Roman", Times, serif;
+  font-family: "Russo One", Roboto, "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
+}
+
+// Display font
+@mixin display-font() {
+  font-family: digital-7_monoitalic, monospace;
+  font-style: normal;
+  font-weight: normal;
 }

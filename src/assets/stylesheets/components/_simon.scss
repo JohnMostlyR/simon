@@ -1,50 +1,34 @@
-$btn-one-bg-color: #C00;
-$btn-two-bg-color: #00C;
-$btn-three-bg-color: #CC0;
-$btn-four-bg-color: #060;
-
 .c-simon {
-  &__btn {
-    appearance: none;
-  }
+  border-radius: 50%;
+  height: 40vmin;
+  position: relative;
+  width: 40vmin;
+  background-image: linear-gradient(to bottom, #333 50%, #fdfaf7 50%);
+  border: 2vmin solid #333;
 }
 
-.c-simon__btn--one {
-  &.is-active {
-    background-color: $btn-one-bg-color + 80;
-  }
-
-  &.is-not-active {
-    background-color: $btn-one-bg-color;
-  }
+.c-simon__control-panel {
+  padding-top: 2vmin;
+  text-align: center;
 }
 
-.c-simon__btn--two {
-  &.is-active {
-    background-color: $btn-two-bg-color + 80;
-  }
-
-  &.is-not-active {
-    background-color: $btn-two-bg-color;
-  }
+.c-simon__heading {
+  @include heading-font();
+  color: #fdfaf7;
+  font-size: 10vmin;
+  margin: 3vmin 0 0;
+  text-align: center;
 }
 
-.c-simon__btn--three {
-  &.is-active {
-    background-color: $btn-three-bg-color + 80;
-  }
-
-  &.is-not-active {
-    background-color: $btn-three-bg-color;
-  }
+.c-simon__sub-heading {
+  font-size: 1vmin;
 }
 
-.c-simon__btn--four {
-  &.is-active {
-    background-color: $btn-four-bg-color + 80;
-  }
-
-  &.is-not-active {
-    background-color: $btn-four-bg-color;
-  }
+.c-background {
+  border-radius: 50%;
+  height: 95vmin;
+  position: absolute;
+  width: 95vmin;
+  z-index: -2;
+  background-color: #333;
 }

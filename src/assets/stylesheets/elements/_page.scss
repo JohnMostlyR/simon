@@ -1,0 +1,19 @@
+html {
+  font-size: calc(1em + 1vw);
+  line-height: 1.5;
+  min-height: 100%;
+}
+
+body {
+  @include base-font-regular();
+  margin: 0;
+  background-color: #fdfaf7;
+}
+
+main {
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  overflow-x: hidden;
+}

@@ -1,39 +1,54 @@
 <main class="c-main">
   <article class="c-simon">
-    <h1 class="c-simon__heading">A Simon Game</h1>
+    <h1 class="c-simon__heading">simon<span class="c-simon__sub-heading">®</span></h1>
     <section class="c-display">
-      <h2 class="c-display__heading">Count</h2>
-      <span class="c-display__digit">
-        <output id="js-display-digit-one">0</output>
-      </span>
-      <span class="c-display__digit">
-        <output id="js-display-digit-two">0</output>
-      </span>
+      <h2 class="c-display__heading u-visuallyhidden">Score</h2>
+      <div class="c-display__background">
+        <output id="js-display-digit-one" class="c-display__digit">0</output>
+        <output id="js-display-digit-two" class="c-display__digit">0</output>
+      </div>
     </section>
-    <form id="js-simon-form" class="c-form" action="#" method="post" autocomplete="off">
-      <fieldset class="c-form__fieldset">
-        <legend class="c-form__legend">Power</legend>
-        <input type="checkbox" name="power" id="js-simon-power" class="c-form__checkbox">
-        <label for="js-simon-power" class="c-form__label c-form__label-for-power">Power</label>
-      </fieldset>
-      <fieldset class="c-form__fieldset">
-        <legend class="c-form__legend">Start</legend>
-        <input type="checkbox" name="start" id="js-simon-start" class="c-form__checkbox" disabled>
-        <label for="js-simon-start" class="c-form__label c-form__label-for-start">Start</label>
-      </fieldset>
-      <fieldset class="c-form__fieldset">
-        <legend class="c-form__legend">Strict</legend>
-        <input type="checkbox" name="strict" id="js-simon-strict" class="c-form__checkbox" disabled>
-        <label for="js-simon-strict" class="c-form__label c-form__label-for-strict">Strict</label>
-      </fieldset>
-    </form>
-    <button id="js-simon-1-btn" class="c-simon__btn c-simon__btn--one is-not-active">Red</button>
-    <button id="js-simon-2-btn" class="c-simon__btn c-simon__btn--two is-not-active">Blue</button>
-    <button id="js-simon-3-btn" class="c-simon__btn c-simon__btn--three is-not-active">Yellow</button>
-    <button id="js-simon-4-btn" class="c-simon__btn c-simon__btn--four is-not-active">Green</button>
-    <audio id="js-simon-sound-1" src="https://s3.amazonaws.com/freecodecamp/simonSound1.mp3" preload="auto"></audio>
-    <audio id="js-simon-sound-2" src="https://s3.amazonaws.com/freecodecamp/simonSound2.mp3" preload="auto"></audio>
-    <audio id="js-simon-sound-3" src="https://s3.amazonaws.com/freecodecamp/simonSound3.mp3" preload="auto"></audio>
-    <audio id="js-simon-sound-4" src="https://s3.amazonaws.com/freecodecamp/simonSound4.mp3" preload="auto"></audio>
+    <section class="c-simon__control-panel">
+      <h2 class="u-visuallyhidden">Control panel</h2>
+      <form id="js-simon-form" class="c-form" action="#" method="post" autocomplete="off">
+        <fieldset class="c-form__fieldset">
+          <legend class="c-form__legend">POWER</legend>
+          <input type="checkbox" name="power" id="js-simon-power"
+                 class="c-form__checkbox c-form__checkbox--power u-visuallyhidden">
+          <label for="js-simon-power" class="c-form__label c-form__label-power">
+            <div class="c-form__label-text u-visuallyhidden">Power</div>
+          </label>
+        </fieldset>
+        <fieldset class="c-form__fieldset">
+          <legend class="c-form__legend">START</legend>
+          <input type="checkbox" name="start" id="js-simon-start"
+                 class="c-form__checkbox c-form__checkbox--start u-visuallyhidden" disabled>
+          <label for="js-simon-start" class="c-form__label c-form__label-start">
+            <div class="c-form__label-text u-visuallyhidden">Start</div>
+          </label>
+        </fieldset>
+        <fieldset class="c-form__fieldset">
+          <legend class="c-form__legend">STRICT</legend>
+          <input type="checkbox" name="strict" id="js-simon-strict"
+                 class="c-form__checkbox c-form__checkbox--strict u-visuallyhidden" disabled>
+          <label for="js-simon-strict" class="c-form__label c-form__label-strict">
+            <div class="c-form__label-text u-visuallyhidden">Strict</div>
+          </label>
+        </fieldset>
+      </form>
+    </section>
   </article>
+  <div class="c-background"></div>
+  <button id="js-simon-4-btn" class="c-lenses__lens c-lenses__lens--four is-not-active">
+    <span class="u-visuallyhidden">Green</span>
+  </button>
+  <button id="js-simon-1-btn" class="c-lenses__lens c-lenses__lens--one is-not-active">
+    <span class="u-visuallyhidden">Red</span>
+  </button>
+  <button id="js-simon-3-btn" class="c-lenses__lens c-lenses__lens--three is-not-active">
+    <span class="u-visuallyhidden">Yellow</span>
+  </button>
+  <button id="js-simon-2-btn" class="c-lenses__lens c-lenses__lens--two is-not-active">
+    <span class="u-visuallyhidden">Blue</span>
+  </button>
 </main>

@@ -1,0 +1,32 @@
+.c-display {
+  margin-top: -1vmin;
+  text-align: center;
+  line-height: 1;
+}
+
+.c-display__background {
+  display: inline-block;
+  margin: 0 auto;
+  border-radius: .5vmin;
+  background-image: linear-gradient(to bottom, #fdfaf7 50%, #333 50%);
+}
+
+.c-display__digit {
+  @include display-font();
+  color: red;
+  background-color: #333;
+  font-size: 6vmin;
+  padding: 0 .2rem;
+
+  &:not(:last-child) {
+    margin-right: -.4rem;
+  }
+
+  &:first-child {
+    border-top-left-radius: .5vmin;
+  }
+
+  &:last-child {
+    border-top-right-radius: .5vmin;
+  }
+}

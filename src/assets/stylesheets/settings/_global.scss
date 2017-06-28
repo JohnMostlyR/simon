@@ -16,6 +16,23 @@ $assets-folder-path: '../images/';
 //
 // Colors
 //––––––––––––––––––––––––––––––––––––––––––––––––––
+$lens-one-bg-color: #C00;
+$lens-two-bg-color: #00C;
+$lens-three-bg-color: #CC0;
+$lens-four-bg-color: #060;
+
+$lens-one-bg-color--active: $lens-one-bg-color + 80;
+$lens-two-bg-color--active: $lens-two-bg-color + 150;
+$lens-three-bg-color--active: $lens-three-bg-color + 80;
+$lens-four-bg-color--active: $lens-four-bg-color + 80;
+
+$power-btn-bg-color: $lens-two-bg-color;
+$start-btn-bg-color: $lens-one-bg-color;
+$strict-btn-bg-color: $lens-three-bg-color;
+
+$power-btn-bg-color--active: $lens-two-bg-color--active;
+$start-btn-bg-color--active: $lens-one-bg-color--active;
+$strict-btn-bg-color--active: $lens-three-bg-color--active;
 
 // Named colors definition
 

@@ -5,18 +5,19 @@
 @import 'settings/z-indexes';
 
 // TOOLS
+@import 'tools/svg-url';
 
 // GENERIC
 @import 'generic/fonts';
 
 // ELEMENTS
-@import 'elements/body';
 @import 'elements/bold';
 @import 'elements/emphasis';
 @import 'elements/paragraph';
 @import 'elements/strong';
 @import 'elements/input-range';
 @import 'elements/img';
+@import 'elements/page';
 
 // OBJECTS
 @import 'objects/shadows';
@@ -31,3 +32,6 @@
 
 // COMPONENTS
 @import 'components/simon';
+@import 'components/form';
+@import 'components/lenses';
+@import 'components/display';
