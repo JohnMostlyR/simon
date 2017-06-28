@@ -144,7 +144,7 @@ module.exports = function (grunt) {
         // helpers: 'src/helpers/*.js',
         partials: 'src/partials/*.hbs',
         registerFullPath: true,
-        templateData: 'src/data/en.json',
+        // templateData: 'src/data/en.json',
       },
     },
 
@@ -158,29 +158,6 @@ module.exports = function (grunt) {
         cwd: path.join(buildFolder, 'assets'),
         src: ['**/*'],
         dest: path.join(buildFolder, 'assets'),
-      },
-    },
-
-    // Copy files and folders
-    copy: {
-      main: {
-        files: [
-
-          // includes files within path
-          {
-            expand: true,
-            cwd: sourceFolder,
-            src: ['browserconfig.xml', 'manifest.json'],
-            dest: buildFolder,
-            filter: 'isFile',
-          },
-          {
-            expand: true,
-            cwd: path.join(sourceFolder, subFolder.scripts, 'translations'),
-            src: ['**/*'],
-            dest: path.join(buildFolder, subFolder.scripts, 'translations'),
-          },
-        ],
       },
     },
 
@@ -213,18 +190,7 @@ module.exports = function (grunt) {
       subtask1: {
         files: {
           'build/assets/stylesheets/main.css': 'build/assets/stylesheets/main.css',
-          'build/assets/stylesheets/landing.css': 'build/assets/stylesheets/landing.css',
-          'build/assets/stylesheets/landing-critical.css': 'build/assets/stylesheets/landing-critical.css',
           'build/assets/stylesheets/web-fonts.css': 'build/assets/stylesheets/web-fonts.css',
-          'build/assets/stylesheets/cookie-message.css': 'build/assets/stylesheets/cookie-message.css',
-        },
-      },
-      subtask2: {
-        options: {
-          safe: false,
-        },
-        files: {
-          'build/assets/stylesheets/font-awesome.css': 'build/assets/stylesheets/font-awesome.css',
         },
       },
     },
@@ -428,7 +394,7 @@ module.exports = function (grunt) {
     'dev',
     [
       'clean:preBuild',             // Clean build folders
-      'copy:main',                  // Copy some files and folders
+      // 'copy:main',                  // Copy some files and folders
       'imagemin',                   // Minify images
       'babel:dev',                  // Transpile ES6 to ES5
       'sass:dev',                   // Compile SASS to CSS
@@ -445,7 +411,7 @@ module.exports = function (grunt) {
     'prod',
     [
       'clean:preBuild',             // Clean build folders
-      'copy:main',                  // Copy some files and folders
+      // 'copy:main',                  // Copy some files and folders
       'imagemin',                   // Minify images
       'eslint',                     // Check JavaScript code style
       'babel:prod',                 // Transpile ES6 to ES5
