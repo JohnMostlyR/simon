@@ -11,11 +11,14 @@
 {{!-- JAVASCRIPT --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.min.js"></script>
 <script src="assets/scripts/pubsubz.js"></script>
+<script src="assets/scripts/events.js"></script>
+<script src="assets/scripts/form.js"></script>
+<script src="assets/scripts/display.js"></script>
+<script src="assets/scripts/lenses.js"></script>
+<script src="assets/scripts/game.js"></script>
 <script src="assets/scripts/model.js"></script>
 <script src="assets/scripts/view.js"></script>
 <script src="assets/scripts/controller.js"></script>
-<script src="assets/scripts/game.js"></script>
-<script src="assets/scripts/app.js"></script>
 
 {{!-- CSS rel=preload polyfill - https://github.com/filamentgroup/loadCSS --}}
 <script id="inlinejs__preload-polfill">!function(t){'use strict';var e=t.document,r={};r.isPreloadSupported=function(){try{return e.createElement('link').relList.supports('preload')}catch(t){return!1}},r.init=function(){for(var t=e.getElementsByTagName('link'),r=0;r<t.length;r++){var n=t[r];'preload'===n.rel&&'style'===n.getAttribute('as')&&(loadCSS(n.href,n),n.rel=null)}},window.loadCSS&&!r.isPreloadSupported()&&r.init()}(this);</script>

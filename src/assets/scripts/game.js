@@ -1,145 +1,146 @@
 /**
  * Created by Johan on 24-5-2017.
  */
-(function (window) {
+window.Simon = window.Simon || {};
+
+window.Simon.game = (function (window) {
   'use strict';
 
-  function Game(strictMode = false) {
-    this.strictMode = strictMode;
-    this.simonSaid = [];
-    this.userReplyPosition = -1;
-    this.replyTimeout = 5000; // ms
-    this.tonePause = 1000; // ms
-    this.toneLength = 420; // ms
-    this.subscriptions = {};
-    this.lengthToWin = 20;
-    this.timers = {};
+  const lengthToWin = 20;
+  const replyTimeout = 5000; // ms
+  const subscriptions = {};
+  const timers = {};
+  const toneLength = 420; // ms
+  const tonePause = 1000; // ms
 
-    this.subscriptions.onLensPressSubscription = window.pubsubz.subscribe('onLensPress', (topic, lensPressedId) => {
-      this.clearReplyTimeoutTimer();
-      this.checkUserInput(lensPressedId, this.userReplyPosition += 1);
-    });
+  let simonSaid = [];
+  let userReplyPosition = -1;
 
-    this.subscriptions.onLensReleaseSubscription = window.pubsubz.subscribe('onLensRelease', () => {
-      window.pubsubz.publish('onBusy', true);
-      this.advance();
-    });
+  const handleError = function () {
+    window.pubsubz.publish('onSimonListens', false);
+    userReplyPosition = -1;
+    window.pubsubz.publish('onIncorrectReply', true);
+  };
 
-    this.subscriptions.onIncorrectShowedSubscription = window.pubsubz.subscribe('onIncorrectShowed', () => {
-      if (this.strictMode) {
-        // in strict mode reset game
-        this.start();
-      } else {
-        // in non-strict mode play sequence again so user can have another try
-        this.speak(this.simonSaid);
-      }
-    });
+  const clearReplyTimeoutTimer = function () {
+    clearTimeout(timers.replyTimeoutTimerId);
+    timers.replyTimeoutTimerId = 0;
+  };
 
-    this.onStrictSubscription = window.pubsubz.subscribe('onStrict', (topic, data) => {
-      this.strictMode = data;
-    });
-  }
+  const setReplyTimeoutTimer = function () {
+    clearReplyTimeoutTimer();
+    timers.replyTimeoutTimerId = setTimeout(() => {
+      handleError();
+    }, replyTimeout);
+  };
+
+  const listen = function () {
+    window.pubsubz.publish('onSimonListens', true);
+    setReplyTimeoutTimer();
+  };
+
+  const speak = function (sequence) {
+    window.pubsubz.publish('onSimonListens', false);
+    const sequenceLength = sequence.length;
+    let sequenceIndex = 0;
+
+    userReplyPosition = -1;
+
+    // delay between tones
+    timers.delayBetweenTonesTimerId = setInterval(() => {
+      window.pubsubz.publish('onSimonSpeaks', sequence[sequenceIndex]);
+
+      // length of tone
+      timers.toneLengthTimerId = setTimeout(() => {
+        window.pubsubz.publish('onSimonFinishedSpeaking', sequence[sequenceIndex]);
+
+        if (sequenceIndex < sequenceLength - 1) {
+          sequenceIndex += 1; // next tone
+        } else {
+          clearInterval(timers.delayBetweenTonesTimerId);
+          return listen();
+        }
+      }, toneLength);
+    }, tonePause);
+  };
 
   const addNewItem = function (sequence) {
     const chosen = Math.floor((Math.random() * 4) + 1);
     return sequence.concat([chosen]);
   };
 
-  Game.prototype.setReplyTimeoutTimer = function () {
-    this.clearReplyTimeoutTimer();
-    this.timers.replyTimeoutTimerId = setTimeout(() => {
-      window.pubsubz.publish('onBusy', true);
-      this.handleError();
-    }, this.replyTimeout);
-  };
-
-  Game.prototype.clearReplyTimeoutTimer = function () {
-    clearTimeout(this.timers.replyTimeoutTimerId);
-    this.timers.replyTimeoutTimerId = 0;
-  };
-
-  Game.prototype.handleError = function () {
-    this.userReplyPosition = -1;
-    window.pubsubz.publish('onIncorrectReply', true);
-  };
-
-  Game.prototype.listen = function () {
-    this.setReplyTimeoutTimer();
-    window.pubsubz.publish('onBusy', false);
-  };
-
-  Game.prototype.speak = function (sequence) {
-    const sequenceLength = sequence.length;
-    let sequenceIndex = 0;
-
-    this.userReplyPosition = -1;
-
-    // delay between tones
-    this.timers.delayBetweenTonesTimerId = setInterval(() => {
-      window.pubsubz.publish('onSimonSpeaks', sequence[sequenceIndex]);
-
-      // length of tone
-      this.timers.toneLengthTimerId = setTimeout(() => {
-        window.pubsubz.publish('onSimonFinishedSpeaking', sequence[sequenceIndex]);
-
-        if (sequenceIndex < sequenceLength - 1) {
-          sequenceIndex += 1; // next tone
-        } else {
-          clearInterval(this.timers.delayBetweenTonesTimerId);
-          return this.listen();
-        }
-      }, this.toneLength);
-    }, this.tonePause);
-  };
-
-  Game.prototype.advance = function () {
-    if (this.userReplyPosition === this.simonSaid.length - 1) {
-      if (this.simonSaid.length === this.lengthToWin) {
-        window.pubsubz.publish('onWin', this.simonSaid);
+  const advance = function () {
+    if (userReplyPosition === simonSaid.length - 1) {
+      if (simonSaid.length === lengthToWin) {
+        window.pubsubz.publish('onWin', simonSaid);
       } else {
-        this.simonSaid = addNewItem(this.simonSaid);
-        window.pubsubz.publish('onAdvance', this.simonSaid.length);
-        this.speak(this.simonSaid);
+        simonSaid = addNewItem(simonSaid);
+        window.pubsubz.publish('onAdvance', simonSaid.length);
+        speak(simonSaid);
       }
     } else {
-      this.listen();
+      listen();
     }
   };
 
   // Validate user input
-  Game.prototype.checkUserInput = function (userSaid, atIndex) {
-    if (userSaid === this.simonSaid[atIndex]) {
+  const checkUserInput = function (userSaid, atIndex) {
+    if (userSaid === simonSaid[atIndex]) {
       // User correctly replied
       window.pubsubz.publish('onCorrectReply', userSaid);
+      window.pubsubz.publish('onSimonListens', true);
     } else {
-      this.handleError();
+      handleError();
     }
   };
 
-  Game.prototype.reset = function () {
-    window.pubsubz.publish('onBusy', true);
-    Object.keys(this.timers).forEach((timer) => {
-      clearTimeout(this.timers[timer]);
+  const reset = function () {
+    window.pubsubz.publish('onSimonListens', false);
+    Object.keys(subscriptions).forEach((subscription) => {
+      window.pubsubz.unsubscribe(subscriptions[subscription]);
     });
-    this.simonSaid = [];
-    window.pubsubz.publish('onAdvance', 0);
-    this.userReplyPosition = -1;
-  };
-
-  Game.prototype.start = function () {
-    this.reset();
-    this.simonSaid = addNewItem(this.simonSaid);
-    window.pubsubz.publish('onAdvance', this.simonSaid.length);
-    this.speak(this.simonSaid);
-  };
-
-  Game.prototype.stop = function () {
-    this.reset();
-    Object.keys(this.subscriptions).forEach((subscription) => {
-      window.pubsubz.unsubscribe(this.subscriptions[subscription]);
+    Object.keys(timers).forEach((timer) => {
+      clearTimeout(timers[timer]);
+      timers[timer] = 0;
     });
+    simonSaid = [];
+    userReplyPosition = -1;
   };
 
-  window.Simon = window.Simon || {};
-  window.Simon.Game = Game;
+  const start = function () {
+    reset();
+    subscriptions.onLensPressSubscription = window.pubsubz.subscribe('onLensPress', (topic, lensPressedId) => {
+      clearReplyTimeoutTimer();
+      checkUserInput(lensPressedId, userReplyPosition += 1);
+    });
+
+    subscriptions.onLensReleaseSubscription = window.pubsubz.subscribe('onLensRelease', () => {
+      window.pubsubz.publish('onSimonListens', false);
+      advance();
+    });
+
+    subscriptions.onIncorrectShowedSubscription = window.pubsubz.subscribe('onIncorrectShowed', () => {
+      if (window.Simon.model.getStrictMode()) {
+        // in strict mode reset game
+        start();
+      } else {
+        // in non-strict mode play sequence again so user can have another try
+        speak(simonSaid);
+      }
+    });
+
+    simonSaid = addNewItem(simonSaid);
+    window.pubsubz.publish('onAdvance', simonSaid.length);
+    speak(simonSaid);
+  };
+
+  const stop = function () {
+    reset();
+  };
+
+  // PUBLIC
+  return {
+    start,
+    stop,
+  };
 })(window);

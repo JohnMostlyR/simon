@@ -1,81 +1,56 @@
 /**
  * Created by Johan on 24-5-2017.
  */
-(function (window) {
+window.Simon = window.Simon || {};
+
+window.Simon.model = (function (window) {
   'use strict';
 
-  /**
-   * Creates a new model
-   * @constructor
-   */
-  function Model() {
-    this.powerOn = {
-      value: false,
-      validValues: [true, false],
-    };
+  const subscriptions = {};
 
-    this.gameStarted = {
-      value: false,
-      validValues: [true, false],
-    };
+  let powerOn = false;
+  let strictMode = false;
+  let gameStarted = false;
 
-    this.strict = {
-      value: false,
-      validValues: [true, false],
-    };
+  subscriptions.onPower = window.pubsubz.subscribe('onPower', (topic, power) => {
+    powerOn = power;
+  });
 
-    this.count = {
-      value: 0,
-    };
+  subscriptions.onStrictMode = window.pubsubz.subscribe('onStrict', (topic, strict) => {
+    strictMode = strict;
+  });
 
-    this.onAdvanceSubscription = window.pubsubz.subscribe('onAdvance', (topic, count) => {
-      this.setProperty('count', count);
-    });
-  }
-
-  /**
-   * @method setProperty
-   * @description Updates or sets a given property with a given value
-   * @param {string} property - The string representation of the property to update
-   * @param {*} newValue - The value to update the property with
-   */
-  Model.prototype.setProperty = function (property, newValue) {
-    if (!this[property] || typeof this[property] !== 'object') {
-      console.error(`Property '${property}' does not exist`);
-      return;
-    }
-
-    if (arguments.length !== 2) {
-      console.error('Called with less than the required arguments');
-      return;
-    }
-
-    if ('validValues' in this[property] && Array.isArray(this[property].validValues)) {
-      if (this[property].validValues.indexOf(newValue) < 0) {
-        console.error(`Value '${newValue}' is not a valid value for property '${property}'`);
-        return;
+  return {
+    getPowerState() {
+      return powerOn;
+    },
+    setPowerState(state) {
+      if (typeof state === typeof powerOn) {
+        if (state !== powerOn) {
+          powerOn = state;
+        }
       }
-    }
-
-    if (newValue !== this[property].value) {
-      this[property].value = newValue;
-      window.pubsubz.publish(`on${property.substr(0, 1).toUpperCase()}${property.substr(1)}`, newValue);
-    }
+    },
+    getGameStarted() {
+      return gameStarted;
+    },
+    setGameStarted(state) {
+      if (typeof state === typeof gameStarted) {
+        if (state !== gameStarted) {
+          gameStarted = state;
+          window.pubsubz.publish('onGameStarted', gameStarted);
+        }
+      }
+    },
+    getStrictMode() {
+      return strictMode;
+    },
+    setStrictMode(state) {
+      if (typeof state === typeof strictMode) {
+        if (state !== strictMode) {
+          strictMode = state;
+        }
+      }
+    },
   };
-
-  /**
-   * @method getProperty
-   * @param {string} property
-   */
-  Model.prototype.getProperty = function (property) {
-    if (!this[property] || typeof this[property] !== 'object') {
-      console.error(`Property '${property}' does not exist`);
-      return;
-    }
-
-    return this[property].value;
-  };
-
-  window.Simon = window.Simon || {};
-  window.Simon.Model = Model;
 })(window);
