@@ -24,10 +24,12 @@
 
   &:first-child {
     border-top-left-radius: .5vmin;
+    margin-left: .2vmin;
   }
 
   &:last-child {
     border-top-right-radius: .5vmin;
+    margin-right: .2vmin;
   }
 }
 
