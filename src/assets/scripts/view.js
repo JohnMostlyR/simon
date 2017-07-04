@@ -1,14 +1,10 @@
-/**
- * Created by Johan on 24-5-2017.
- */
-window.Simon = window.Simon || {};
-
-window.Simon.view = (function (window) {
+window.simonView = (function (window) {
   'use strict';
 
   // create a synth and connect it to the master output (your speakers)
   const synth = new window.Tone.Synth().toMaster();
   const timers = {};
+  const toneLength = 1500; // milliseconds
   const subscriptions = {};
 
   function showIncorrect() {
@@ -16,7 +12,7 @@ window.Simon.view = (function (window) {
     timers.showErrorTimer = setTimeout(() => {
       synth.triggerRelease();
       window.pubsubz.publish('onIncorrectShowed', true);
-    }, 1500);
+    }, toneLength);
   }
 
   subscriptions.onIncorrectReplySubscription = window.pubsubz.subscribe('onIncorrectReply', () => {

@@ -1,17 +1,12 @@
-/**
- * Created by Johan on 24-5-2017.
- */
-window.Simon = window.Simon || {};
-
-window.Simon.game = (function (window) {
+window.simonGame = (function (window) {
   'use strict';
 
   const lengthToWin = 20;
-  const replyTimeout = 5000; // ms
+  const replyTimeout = 5000; // milliseconds
   const subscriptions = {};
   const timers = {};
-  const toneLength = 420; // ms
-  const tonePause = 1000; // ms
+  const toneLength = 420; // milliseconds
+  const tonePause = 1000; // milliseconds
 
   let simonSaid = [];
   let userReplyPosition = -1;
@@ -120,7 +115,7 @@ window.Simon.game = (function (window) {
     });
 
     subscriptions.onIncorrectShowedSubscription = window.pubsubz.subscribe('onIncorrectShowed', () => {
-      if (window.Simon.model.getStrictMode()) {
+      if (window.simonModel.getStrictMode()) {
         // in strict mode reset game
         start();
       } else {

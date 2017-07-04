@@ -1,9 +1,4 @@
-/**
- * Created by Johan on 28-6-2017.
- */
-window.Simon = window.Simon || {};
-
-window.Simon.events = (function (window) {
+window.simonEvents = (function (window) {
   function normalize(event) {
     if (event.target && event.target.id) {
       const normalizedId = event.target.id.toLowerCase();

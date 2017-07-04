@@ -1,18 +1,13 @@
-/**
- * Created by Johan on 28-6-2017.
- */
-window.Simon = window.Simon || {};
-
-window.Simon.form = (function (window) {
+window.simonForm = (function (window) {
   'use strict';
 
   // PRIVATE
   const document = window.document;
 
   const formNode = document.querySelector('#js-simon-form');
-  const powerButton = formNode.querySelector('#js-simon-power');
-  const startButton = formNode.querySelector('#js-simon-start');
-  const strictButton = formNode.querySelector('#js-simon-strict');
+  const powerButtonNode = formNode.querySelector('#js-simon-power');
+  const startButtonNode = formNode.querySelector('#js-simon-start');
+  const strictButtonNode = formNode.querySelector('#js-simon-strict');
 
   formNode.addEventListener('change', (ev) => {
     if (ev.target && ev.target.id) {
@@ -35,12 +30,12 @@ window.Simon.form = (function (window) {
       switch (parameters.id) {
         case 'power':
           if (parameters.value) {
-            startButton.removeAttribute('disabled');
-            strictButton.removeAttribute('disabled');
+            startButtonNode.removeAttribute('disabled');
+            strictButtonNode.removeAttribute('disabled');
           } else {
             formNode.reset();
-            startButton.setAttribute('disabled', true);
-            strictButton.setAttribute('disabled', true);
+            startButtonNode.setAttribute('disabled', true);
+            strictButtonNode.setAttribute('disabled', true);
           }
           window.pubsubz.publish('onPower', parameters.value);
           break;
@@ -59,13 +54,13 @@ window.Simon.form = (function (window) {
   // PUBLIC
   return {
     getPowerButtonValue() {
-      return powerButton.checked;
+      return powerButtonNode.checked;
     },
     getStartButtonValue() {
-      return startButton.checked;
+      return startButtonNode.checked;
     },
     getStrictButtonValue() {
-      return strictButton.checked;
+      return strictButtonNode.checked;
     },
   };
 })(window);

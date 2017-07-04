@@ -4,8 +4,8 @@
   position: relative;
   width: 40vmin;
   z-index: 1;
-  background-image: linear-gradient(to bottom, #333 50%, #fdfaf7 50%);
-  border: 2vmin solid #333;
+  background-image: linear-gradient(to bottom, $game-bg-color 50%, $game-bg-color--secondary 50%);
+  border: 2vmin solid $game-bg-color;
 }
 
 .c-simon__control-panel {
@@ -15,7 +15,7 @@
 
 .c-simon__heading {
   @include heading-font();
-  color: #fdfaf7;
+  color: $game-bg-color--secondary;
   font-size: 10vmin;
   margin: 3vmin 0 0;
   text-align: center;

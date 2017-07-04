@@ -6,6 +6,10 @@
   // create a synth and connect it to the master output (your speakers)
   const synth = new window.Tone.Synth().toMaster();
 
+  /**
+   * Each index corresponds to the node of a lens, clockwise where the red lens is number one.
+   * @type {[Node]}
+   */
   const lensesNodes = [0];
   [1, 2, 3, 4].forEach((idx) => {
     const lensNode = document.getElementById(`js-simon-${idx}-btn`);
@@ -14,11 +18,19 @@
     lensesNodes.push(lensNode);
   });
 
+  /**
+   * Each index corresponds to the frequency of the tone to play with the corresponding lens.
+   * @type {[number]}
+   */
   const notes = [0, 329.628, 195.998, 261.626, 391.995];
 
   const subscriptions = {};
   const timers = {};
 
+  /**
+   * Light up the lens and play a tone corresponding to the lens indicated by lensIndex.
+   * @param {number} lensIndex
+   */
   function activateLens(lensIndex) {
 
     // switch on the selected lens, if any.
@@ -30,6 +42,10 @@
     }
   }
 
+  /**
+   * Turn off the lens and mute the playing tone corresponding to the lens indicated by lensIndex.
+   * @param {number} lensIndex
+   */
   function deactivateLens(lensIndex) {
     synth.triggerRelease();
 
@@ -64,6 +80,9 @@
     });
   }
 
+  /**
+   * The 'razz' tune to play when the player has completed the game.
+   */
   function playRazz() {
     const sequence = [1, 3, 2, 4, 1, 3, 2, 4, 1, 3, 2, 4];
     let idx = -1;

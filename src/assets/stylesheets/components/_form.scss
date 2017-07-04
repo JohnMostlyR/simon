@@ -1,7 +1,3 @@
-.c-form__checkbox:checked ~ .c-form__label {
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .6);
-}
-
 .c-form__fieldset {
   display: inline-block;
   border: 0;
@@ -16,7 +12,7 @@
   position: relative;
   border-radius: 50%;
   padding: 1.5vmin;
-  box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 0 7px 1px rgba(0, 0, 0, 0.9);
 }
 
 .c-form__legend {
@@ -38,14 +34,17 @@
 .c-form__checkbox--power:checked ~ .c-form__label {
   background-color: $power-btn-bg-color--active;
   background-image: radial-gradient(circle, $power-btn-bg-color--active 50%, $power-btn-bg-color);
+  box-shadow: 0 0 14px 0 $power-btn-bg-color;
 }
 
 .c-form__checkbox--start:checked ~ .c-form__label {
   background-color: $start-btn-bg-color--active;
   background-image: radial-gradient(circle, $start-btn-bg-color--active 50%, $start-btn-bg-color);
+  box-shadow: 0 0 14px 0 $start-btn-bg-color;
 }
 
 .c-form__checkbox--strict:checked ~ .c-form__label {
   background-color: $strict-btn-bg-color--active;
   background-image: radial-gradient(circle, $strict-btn-bg-color--active 50%, $strict-btn-bg-color);
+  box-shadow: 0 0 14px 0 $strict-btn-bg-color;
 }

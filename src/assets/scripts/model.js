@@ -1,9 +1,4 @@
-/**
- * Created by Johan on 24-5-2017.
- */
-window.Simon = window.Simon || {};
-
-window.Simon.model = (function (window) {
+window.simonModel = (function (window) {
   'use strict';
 
   const subscriptions = {};

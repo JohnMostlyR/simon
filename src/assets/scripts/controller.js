@@ -3,27 +3,26 @@
 
   const subscriptions = {};
   const timers = {};
-  const waitingTimeForStartingOverAfterWin = 5000; // ms
-  const game = window.Simon.game;
+  const waitingTimeForStartingOverAfterWin = 3000; // milliseconds
+  const game = window.simonGame;
 
   function handlePowerButton() {
     game.stop();
     Object.keys(timers).forEach((timer) => {
       clearTimeout(timers[timer]);
     });
-    window.Simon.model.setGameStarted(false);
+    window.simonModel.setGameStarted(false);
   }
 
   function handleStartButton(start) {
     if (start) {
       // start new game
       game.start();
-      window.Simon.model.setGameStarted(true);
-    } else {
-      if (window.Simon.model.getGameStarted()) {
-        game.stop();
-        window.Simon.model.setGameStarted(false);
-      }
+      window.simonModel.setGameStarted(true);
+    } else if (window.simonModel.getGameStarted()) {
+      // stop/reset game
+      game.stop();
+      window.simonModel.setGameStarted(false);
     }
   }
 
@@ -35,6 +34,7 @@
     handleStartButton(start);
   });
 
+  // After the winning tune wait a bit and start a new game
   subscriptions.onShowWinFinished = window.pubsubz.subscribe('onShowWinFinished', () => {
     timers.newGame = setTimeout(() => {
       handleStartButton(true);
