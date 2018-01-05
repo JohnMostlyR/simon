@@ -1,5 +1,7 @@
 # New Static Website
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Mensae/simon.svg)](https://greenkeeper.io/)
+
 My starting point for a new static website project
 
 ## Setting Up
